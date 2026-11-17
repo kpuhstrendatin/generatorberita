@@ -479,6 +479,16 @@ function renderGallery() {
   add.onclick = openAddTemplate;
   g.appendChild(add);
 }
+// Cache template agar tidak dimuat ulang setiap kali dipilih
+const TPL_CACHE = {};
+async function getTemplateCanvas(t) {
+  if (TPL_CACHE[t.id]) return TPL_CACHE[t.id];
+  const img = await loadImage(t.src);
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  c.getContext('2d').drawImage(img, 0, 0, W, H);
+  TPL_CACHE[t.id] = c;
+  return c;
+}
 function selectType(type) {
   S.type = type;
   renderTypes();
@@ -486,19 +496,18 @@ function selectType(type) {
   const first = TEMPLATES.find(t => t.type === type);
   if (first) selectTemplate(first.id);
   else { S.tplId = null; S.template = null; renderGallery(); render(); }
-  // tampilkan ulang judul/teks sesuai jenis
-  render();
 }
 async function selectTemplate(id) {
   const t = TEMPLATES.find(x => x.id === id);
   if (!t) return;
+  // tandai langsung agar pilihan terlihat sebelum gambar selesai dimuat
+  S.tplId = id; S.type = t.type;
+  renderTypes(); updatePhotoUI(); renderGallery();
   try {
-    const img = await loadImage(t.src);
-    const c = document.createElement('canvas'); c.width = W; c.height = H;
-    c.getContext('2d').drawImage(img, 0, 0, W, H);
-    S.template = c; S.tplId = id; S.type = t.type;
-    renderGallery(); render();
+    S.template = await getTemplateCanvas(t);
+    render();
   } catch (e) {
+    S.template = null; render();
     toast('toastAI', 'Template tidak termuat. Pastikan folder templates/ ada dan dibuka lewat server lokal atau GitHub Pages.', 'err');
   }
 }
