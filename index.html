@@ -46,10 +46,13 @@ svg{display:block}
 }
 .top-in{position:relative;max-width:1280px;margin:auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .logo-box{
-  height:76px;padding:8px;border-radius:18px;background:rgba(255,255,255,.97);
-  box-shadow:0 12px 30px -8px rgba(0,0,0,.45);display:grid;place-items:center;position:relative;
+  padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.97);
+  box-shadow:0 12px 30px -8px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;
+  position:relative;flex:0 0 auto;width:auto;max-width:100%;
 }
-.logo-box img{height:100%;width:auto;display:block;object-fit:contain}
+.logo-box img{height:68px;width:auto;max-width:none;display:block;object-fit:contain}
+.logo-box .fb{position:static}
+@media(max-width:600px){.logo-box img{height:52px}}
 .logo-box .fb{position:absolute;inset:0;display:grid;place-items:center;font-family:Montserrat,sans-serif;font-weight:900;color:var(--r600);font-size:16px}
 .brand-text h1{margin:0;font-family:Montserrat,sans-serif;font-size:24px;font-weight:900;letter-spacing:-.2px;line-height:1.1}
 .brand-text p{margin:4px 0 0;font-size:13px;opacity:.88;font-weight:600}
@@ -61,6 +64,10 @@ svg{display:block}
 }
 .tag.gold{background:var(--gold);border-color:var(--gold);color:var(--r700)}
 .ai-chip{cursor:pointer;font-family:inherit;color:#fff}
+.update-btn{cursor:pointer;font-family:inherit;color:#fff;background:rgba(255,255,255,.12)}
+.update-btn:hover{background:rgba(255,255,255,.24)}
+.update-btn.new{background:var(--gold);border-color:var(--gold);color:var(--r700);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(247,194,26,.55)}50%{box-shadow:0 0 0 7px rgba(247,194,26,0)}}
 .ai-chip.on::before{content:"● ";color:#7CF0A6}
 .ai-chip.off::before{content:"● ";color:var(--gold2)}
 .gear{
@@ -306,6 +313,7 @@ footer b{color:var(--r600)}
       <p>Buat cover berita & dokumentasi kegiatan dalam hitungan menit</p>
     </div>
     <div class="hdr-right">
+      <button class="tag update-btn" id="updBtn" onclick="perbaruiVersi()" title="Muat ulang aplikasi dengan versi terbaru">↻ Versi terbaru</button>
       <span class="tag gold hide-sm">#KPUMelayani</span>
       <button class="tag ai-chip off" id="aiChip" onclick="openSettings()">AI belum diatur</button>
       <button class="gear" onclick="openSettings()" title="Pengaturan">
@@ -520,6 +528,8 @@ footer b{color:var(--r600)}
 const $ = id => document.getElementById(id);
 const W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
+// Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
+const APP_VERSION = '2026.11.18-2';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
@@ -1100,7 +1110,26 @@ function resetAll() {
   });
 })();
 
+// ===== Versi terbaru =====
+function perbaruiVersi() {
+  // Parameter baru membuat browser mengambil index.html terbaru, bukan dari cache
+  location.href = location.pathname + '?v=' + Date.now();
+}
+async function cekVersi() {
+  try {
+    const r = await fetch('index.html?cek=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) return;
+    const m = (await r.text()).match(/APP_VERSION = '([^']+)'/);
+    if (m && m[1] !== APP_VERSION) {
+      const b = $('updBtn');
+      b.classList.add('new');
+      b.textContent = '⬆ Versi baru tersedia';
+    }
+  } catch (e) { /* offline atau dibuka dari file lokal: lewati */ }
+}
+
 // ===== Init =====
+cekVersi();
 initLogo();
 updateAiChip();
 const savedModel = localStorage.getItem('gemini_model');
