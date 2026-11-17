@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
-<title>Generator Cover Berita KPU HST</title>
+<title>Generator Berita · KPU Kab. Hulu Sungai Tengah</title>
 <link rel="icon" href="logo-kpu.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --r900:#4a0006; --r800:#6b0009; --r700:#8f0c14; --r600:#b3121c; --r500:#d1202c;
@@ -34,7 +34,7 @@ svg{display:block}
 .top{
   position:relative;overflow:hidden;color:#fff;
   background:linear-gradient(120deg,var(--r900) 0%,var(--r700) 55%,var(--r600) 100%);
-  padding:22px 28px 26px;
+  padding:20px 28px 24px;
 }
 .top::before{
   content:"";position:absolute;inset:-40% -10% auto auto;width:620px;height:620px;border-radius:50%;
@@ -46,24 +46,30 @@ svg{display:block}
 }
 .top-in{position:relative;max-width:1280px;margin:auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .logo-box{
-  width:auto;height:64px;padding:8px 14px;border-radius:16px;background:rgba(255,255,255,.96);
-  box-shadow:0 10px 30px -8px rgba(0,0,0,.45);display:grid;place-items:center;position:relative;min-width:64px;
+  height:76px;padding:8px;border-radius:18px;background:rgba(255,255,255,.97);
+  box-shadow:0 12px 30px -8px rgba(0,0,0,.45);display:grid;place-items:center;position:relative;
 }
-.logo-box img{height:100%;width:auto;display:block;max-width:300px;object-fit:contain}
-.logo-box .fb{position:absolute;inset:0;display:grid;place-items:center;font-family:Montserrat,sans-serif;font-weight:900;color:var(--r600);font-size:16px;letter-spacing:.5px}
+.logo-box img{height:100%;width:auto;display:block;object-fit:contain}
+.logo-box .fb{position:absolute;inset:0;display:grid;place-items:center;font-family:Montserrat,sans-serif;font-weight:900;color:var(--r600);font-size:16px}
 .brand-text h1{margin:0;font-family:Montserrat,sans-serif;font-size:24px;font-weight:900;letter-spacing:-.2px;line-height:1.1}
 .brand-text p{margin:4px 0 0;font-size:13px;opacity:.88;font-weight:600}
-.eyebrow{
-  display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
-  color:var(--gold2);margin-bottom:6px;
-}
-.hdr-tags{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.eyebrow{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold2);margin-bottom:6px}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .tag{
   font-size:12px;font-weight:800;padding:7px 14px;border-radius:999px;white-space:nowrap;
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(6px);
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);
 }
 .tag.gold{background:var(--gold);border-color:var(--gold);color:var(--r700)}
-@media(max-width:760px){.hdr-tags{display:none}.top{padding:18px 18px 22px}}
+.ai-chip{cursor:pointer;font-family:inherit;color:#fff}
+.ai-chip.on::before{content:"● ";color:#7CF0A6}
+.ai-chip.off::before{content:"● ";color:var(--gold2)}
+.gear{
+  width:42px;height:42px;border-radius:14px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.14);
+  color:#fff;display:grid;place-items:center;cursor:pointer;transition:all .2s;
+}
+.gear:hover{background:rgba(255,255,255,.26);transform:rotate(30deg)}
+.gear svg{width:20px;height:20px}
+@media(max-width:760px){.top{padding:16px 16px 20px}.tag.hide-sm{display:none}}
 
 /* ================= LAYOUT ================= */
 .main{max-width:1280px;margin:0 auto;padding:24px}
@@ -84,10 +90,7 @@ svg{display:block}
   position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:50%;
   display:grid;place-items:center;border:1.5px solid #e2cfcf;background:#fff;color:transparent;transition:all .2s;
 }
-.type.active{
-  background:linear-gradient(120deg,var(--r700),var(--r500));border-color:transparent;color:#fff;
-  box-shadow:0 18px 40px -14px rgba(143,12,20,.55);
-}
+.type.active{background:linear-gradient(120deg,var(--r700),var(--r500));border-color:transparent;color:#fff;box-shadow:0 18px 40px -14px rgba(143,12,20,.55)}
 .type.active small{color:rgba(255,255,255,.85)}
 .type.active .ti{background:rgba(255,255,255,.18);color:#fff}
 .type.active .tick{background:var(--gold);border-color:var(--gold);color:var(--r700)}
@@ -96,12 +99,8 @@ svg{display:block}
 
 /* ================= CARD ================= */
 .card{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:1px solid var(--line);box-shadow:var(--shadow)}
-.card-h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.num{
-  width:32px;height:32px;flex:0 0 32px;border-radius:11px;display:grid;place-items:center;
-  background:linear-gradient(135deg,var(--r700),var(--r500));color:#fff;font-weight:800;font-size:14px;
-  box-shadow:0 8px 16px -6px rgba(143,12,20,.6);
-}
+.card-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.card-h .bar{width:5px;height:20px;border-radius:4px;background:linear-gradient(180deg,var(--r500),var(--gold))}
 .card-h h3{margin:0;font-size:15px;font-weight:800}
 .card-h .hint{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted);background:#f7f1f1;padding:4px 9px;border-radius:999px}
 
@@ -113,7 +112,7 @@ input[type=text],input[type=password],input[type=date],select,textarea{
 }
 input::placeholder,textarea::placeholder{color:#b5a6a6}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--r500);background:#fff;box-shadow:0 0 0 4px rgba(209,32,44,.12)}
-textarea{min-height:76px;resize:vertical}
+textarea{min-height:88px;resize:vertical;line-height:1.5}
 input[type=range]{width:100%;accent-color:var(--r600);margin:4px 0 2px}
 input:disabled{opacity:.55}
 .help{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
@@ -158,8 +157,7 @@ input:disabled{opacity:.55}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .chip{
   border:1.5px solid #efe4e4;background:#fff;color:var(--ink2);border-radius:999px;padding:8px 14px;
-  font:inherit;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
-  transition:all .15s;
+  font:inherit;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .15s;
 }
 .chip:hover{border-color:var(--r500);color:var(--r600);background:#fff5f5}
 .chip svg{width:14px;height:14px}
@@ -235,9 +233,39 @@ canvas{width:100%;height:auto;display:block}
 .hist button:hover{border-color:var(--r500);background:#fff3f3}
 .hist small{color:var(--muted);display:block;margin-top:3px;font-weight:600;font-size:11px}
 
+/* ================= MODAL PENGATURAN ================= */
+.modal{position:fixed;inset:0;background:rgba(29,20,20,.55);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+.modal.open{display:flex}
+.sheet{background:#fff;border-radius:26px;max-width:560px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 40px 80px -30px rgba(0,0,0,.5)}
+.sheet-h{
+  position:relative;padding:22px 24px;color:#fff;border-radius:26px 26px 0 0;
+  background:linear-gradient(120deg,var(--r900),var(--r700) 60%,var(--r600));
+}
+.sheet-h h2{margin:0;font-size:18px;font-weight:900}
+.sheet-h p{margin:4px 0 0;font-size:13px;opacity:.85}
+.x{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:18px;cursor:pointer}
+.sheet-b{padding:22px 24px 24px}
+.sec-t{font-size:13px;font-weight:800;margin:0 0 10px;color:var(--r600);text-transform:uppercase;letter-spacing:.6px}
+.steps{list-style:none;padding:0;margin:0 0 20px;counter-reset:st}
+.steps li{counter-increment:st;position:relative;padding:0 0 14px 44px;font-size:14px;line-height:1.5;color:var(--ink2)}
+.steps li::before{
+  content:counter(st);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:10px;
+  background:linear-gradient(135deg,var(--r700),var(--r500));color:#fff;font-weight:800;font-size:13px;
+  display:grid;place-items:center;box-shadow:0 6px 12px -6px rgba(143,12,20,.6);
+}
+.steps li b{color:var(--ink)}
+.steps a{color:var(--r600);font-weight:800}
+.note{background:#fff9e6;border:1px solid #ffe7a1;color:#7a5200;border-radius:14px;padding:12px 14px;font-size:12.5px;line-height:1.5;margin-top:4px}
+.setg{display:grid;gap:4px;padding:16px;border-radius:18px;background:#fffafa;border:1px solid var(--line);margin-bottom:16px}
+.logo-prev{display:flex;align-items:center;gap:14px}
+.logo-prev .pvbox{width:150px;height:56px;border-radius:14px;background:var(--r700);display:grid;place-items:center;padding:6px}
+.logo-prev .pvbox img{max-height:100%;max-width:100%;object-fit:contain}
+.sheet-f{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+
 .spin{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:s .7s linear infinite}
 @keyframes s{to{transform:rotate(360deg)}}
 
+.cam{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:18px;background:#000;display:block}
 footer{text-align:center;font-size:12px;color:var(--muted);padding:6px 0 30px;font-weight:600}
 footer b{color:var(--r600)}
 
@@ -245,7 +273,7 @@ footer b{color:var(--r600)}
 @media(max-width:960px){
   .grid{grid-template-columns:1fr;gap:14px}
   .main{padding:14px}
-  .hero-types{grid-template-columns:1fr 1fr;gap:10px}
+  .hero-types{gap:10px}
   .type{padding:14px;flex-direction:column;align-items:flex-start;gap:10px}
   .type .ti{width:44px;height:44px;flex-basis:44px}
   .type small{font-size:12px}
@@ -260,6 +288,7 @@ footer b{color:var(--r600)}
 @media(max-width:480px){
   .hero-types{grid-template-columns:1fr}
   .type{flex-direction:row;align-items:center}
+  .type .ti{width:44px;height:44px}
 }
 </style>
 </head>
@@ -272,20 +301,23 @@ footer b{color:var(--r600)}
       <span class="fb" id="logoFb">KPU</span>
     </div>
     <div class="brand-text">
-      <span class="eyebrow">Humas KPU Kab. HST</span>
-      <h1>Generator Cover Berita</h1>
+      <span class="eyebrow">KPU Kabupaten Hulu Sungai Tengah</span>
+      <h1>Generator Berita</h1>
       <p>Buat cover berita & dokumentasi kegiatan dalam hitungan menit</p>
     </div>
-    <div class="hdr-tags">
-      <span class="tag gold">#KPUMelayani</span>
-      <span class="tag">#KPUKabHST</span>
+    <div class="hdr-right">
+      <span class="tag gold hide-sm">#KPUMelayani</span>
+      <button class="tag ai-chip off" id="aiChip" onclick="openSettings()">AI belum diatur</button>
+      <button class="gear" onclick="openSettings()" title="Pengaturan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
     </div>
   </div>
 </header>
 
 <main class="main">
 
-  <!-- Pilih jenis -->
+  <!-- Jenis cover -->
   <div class="hero-types">
     <button class="type" data-type="sampul" onclick="selectType('sampul')">
       <span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
@@ -295,14 +327,14 @@ footer b{color:var(--r600)}
     <button class="type" data-type="dokumentasi" onclick="selectType('dokumentasi')">
       <span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
       <span class="ti"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><circle cx="12" cy="12.5" r="3.2"/><path d="M8.5 6l1.5-2h4l1.5 2"/></svg></span>
-      <span><b>Dokumentasi</b><small>Dua foto kegiatan dengan keterangan</small></span>
+      <span><b>Dokumentasi</b><small>Dua foto kegiatan dengan narasi di tengah</small></span>
     </button>
   </div>
 
   <!-- Template -->
   <section class="card">
     <div class="gal-h">
-      <div class="card-h" style="margin:0"><span class="num">T</span><h3>Pilih Template</h3></div>
+      <div class="card-h" style="margin:0"><span class="bar"></span><h3>Pilih Template</h3></div>
       <button class="chip" onclick="openAddTemplate()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
         Tambah Template
@@ -314,16 +346,15 @@ footer b{color:var(--r600)}
 
   <div class="grid">
     <div>
-      <!-- 1. Foto -->
+      <!-- Foto -->
       <div class="card">
-        <div class="card-h"><span class="num">1</span><h3 id="photoTitle">Foto Utama</h3><span class="hint">JPG / PNG</span></div>
+        <div class="card-h"><span class="bar"></span><h3 id="photoTitle">Foto Utama</h3><span class="hint">JPG / PNG</span></div>
         <label class="filepick" for="photoFile" id="pick1">
           <span class="fp-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg></span>
           <span class="fp-txt"><b>Unggah foto</b><small id="photoName">Belum ada foto dipilih</small></span>
           <span class="fp-btn">Pilih</span>
         </label>
         <input type="file" id="photoFile" accept="image/*" class="sr">
-
         <label class="lbl">Zoom</label>
         <input type="range" id="zoom" min="1" max="2.5" step="0.01" value="1">
         <label class="lbl">Geser horizontal</label>
@@ -339,71 +370,60 @@ footer b{color:var(--r600)}
             <span class="fp-btn">Pilih</span>
           </label>
           <input type="file" id="photoFile2" accept="image/*" class="sr">
-
           <label class="lbl">Zoom</label>
           <input type="range" id="zoom2" min="1" max="2.5" step="0.01" value="1">
           <label class="lbl">Geser horizontal</label>
           <input type="range" id="posX2" min="-1" max="1" step="0.01" value="0">
           <label class="lbl">Geser vertikal</label>
           <input type="range" id="posY2" min="-1" max="1" step="0.01" value="0">
+          <div class="btn-row"><button class="chip" onclick="openCamera(2)">📷 Ambil dari kamera</button></div>
         </div>
-
-        <div class="btn-row"><button class="chip" onclick="resetPhoto()">↺ Reset posisi foto</button></div>
+        <div class="btn-row">
+          <button class="chip" onclick="openCamera(1)">📷 Ambil dari kamera</button>
+          <button class="chip" onclick="resetPhoto()">↺ Reset posisi foto</button>
+        </div>
       </div>
 
-      <!-- 2. Tanggal -->
-      <div class="card">
-        <div class="card-h"><span class="num">2</span><h3>Tanggal</h3></div>
+      <!-- Tanggal (sampul saja) -->
+      <div class="card" id="cardDate">
+        <div class="card-h"><span class="bar"></span><h3>Tanggal</h3></div>
         <label class="switch">Otomatis hari ini <input type="checkbox" id="autoDate" checked></label>
         <label class="lbl">Tanggal manual</label>
         <input type="date" id="tanggal" disabled>
       </div>
 
-      <!-- 3. Judul & AI -->
+      <!-- Judul / Keterangan & AI -->
       <div class="card">
-        <div class="card-h"><span class="num">3</span><h3>Judul & Narasi</h3><span class="hint">✨ Gemini AI</span></div>
-        <label class="lbl" for="judulSantai">Judul (bahasa santai)</label>
-        <input type="text" id="judulSantai" placeholder="contoh: sekretariat ikut bimtek elearning lapkin">
-        <label class="lbl" for="ket">Keterangan tambahan (opsional)</label>
-        <textarea id="ket" placeholder="lokasi, peserta, pemateri, atau hal lain yang perlu masuk narasi"></textarea>
+        <div class="card-h"><span class="bar"></span><h3 id="textTitle">Judul</h3><span class="hint">✨ Gemini AI</span></div>
+        <label class="lbl" id="lblSantai" for="inputSantai">Judul (bahasa santai)</label>
+        <input type="text" id="inputSantai">
         <button class="btn gold block" id="btnAI" onclick="formalkan()" style="margin-top:14px">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
-          Formalkan & Buat Narasi
+          <span id="btnAIText">Formalkan Judul dengan AI</span>
         </button>
+        <label class="lbl" id="lblHasil" for="hasil" style="margin-top:18px">Judul formal</label>
+        <textarea id="hasil" rows="2"></textarea>
+        <div class="btn-row"><button class="chip" onclick="copyField('hasil')">📋 Salin</button></div>
         <div class="toast" id="toastAI"></div>
       </div>
 
-      <!-- 4. Hasil -->
+      <!-- Caption -->
       <div class="card">
-        <div class="card-h"><span class="num">4</span><h3>Hasil</h3><span class="hint">bisa diedit</span></div>
-        <label class="lbl" for="judulFormal">Judul formal</label>
-        <input type="text" id="judulFormal">
-        <div class="btn-row"><button class="chip" onclick="copyField('judulFormal')">📋 Salin judul</button></div>
-        <label class="lbl" for="narasi">Narasi 1 kalimat</label>
-        <textarea id="narasi"></textarea>
-        <div class="btn-row"><button class="chip" onclick="copyField('narasi')">📋 Salin narasi</button></div>
+        <div class="card-h"><span class="bar"></span><h3>Caption Media Sosial</h3><span class="hint">#temanpemilih #KPUKabHST</span></div>
+        <div class="help" style="margin:0 0 12px">Caption memuat konteks, manfaat, dan ajakan (call to action). Hashtag #temanpemilih dan #KPUKabHST selalu disertakan.</div>
+        <button class="btn block" id="btnCap" onclick="buatCaption()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Buat Caption dengan AI
+        </button>
+        <label class="lbl" for="caption" style="margin-top:16px">Hasil caption</label>
+        <textarea id="caption" rows="6"></textarea>
+        <div class="btn-row"><button class="chip" onclick="copyField('caption')">📋 Salin caption</button></div>
+        <div class="toast" id="toastCap"></div>
       </div>
 
-      <!-- 5. Pengaturan -->
+      <!-- Riwayat -->
       <div class="card">
-        <div class="card-h"><span class="num">5</span><h3>Pengaturan AI</h3></div>
-        <label class="lbl" for="apiKey">Gemini API key</label>
-        <div style="display:flex;gap:8px">
-          <input type="password" id="apiKey" placeholder="tempel API key" style="flex:1">
-          <button class="chip" onclick="toggleKey()">👁 Tampil</button>
-        </div>
-        <div class="help">Disimpan hanya di browser ini, tidak dikirim ke server mana pun selain Google.</div>
-        <label class="lbl" for="model">Model</label>
-        <select id="model">
-          <option value="gemini-3.5-flash" selected>gemini-3.5-flash (default, disarankan)</option>
-          <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-          <option value="gemini-2.5-pro">gemini-2.5-pro (kualitas lebih baik)</option>
-        </select>
-      </div>
-
-      <!-- 6. Riwayat -->
-      <div class="card">
-        <div class="card-h"><span class="num">6</span><h3>Riwayat</h3></div>
+        <div class="card-h"><span class="bar"></span><h3>Riwayat</h3></div>
         <div class="hist" id="hist"></div>
       </div>
     </div>
@@ -422,7 +442,7 @@ footer b{color:var(--r600)}
             Unduh PNG
           </button>
           <button class="btn soft sm" onclick="resetAll()">Kosongkan</button>
-          <button class="btn ink sm" onclick="copyField('judulFormal')">Salin judul</button>
+          <button class="btn ink sm" onclick="copyField('caption')">Salin caption</button>
         </div>
       </div>
     </aside>
@@ -431,9 +451,75 @@ footer b{color:var(--r600)}
 
 <footer>Dibuat untuk <b>KPU Kabupaten Hulu Sungai Tengah</b> · Pemilu Sarana Integrasi Bangsa</footer>
 
+<!-- MODAL KAMERA -->
+<div class="modal" id="camModal" onclick="if(event.target===this)closeCamera()">
+  <div class="sheet">
+    <div class="sheet-h">
+      <button class="x" onclick="closeCamera()" aria-label="Tutup">✕</button>
+      <h2>Ambil Foto</h2>
+      <p>Arahkan kamera, lalu tekan Ambil Foto.</p>
+    </div>
+    <div class="sheet-b">
+      <video id="camVideo" class="cam" autoplay playsinline muted></video>
+      <div class="help" id="camMsg" style="color:#a10d15;font-weight:700"></div>
+      <div class="sheet-f">
+        <button class="btn soft sm" onclick="closeCamera()">Batal</button>
+        <button class="btn" onclick="captureCamera()">📸 Ambil Foto</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PENGATURAN -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeSettings()">
+  <div class="sheet">
+    <div class="sheet-h">
+      <button class="x" onclick="closeSettings()" aria-label="Tutup">✕</button>
+      <h2>Pengaturan AI</h2>
+      <p>Hubungkan Gemini agar judul, narasi, dan caption bisa dibuat otomatis.</p>
+    </div>
+    <div class="sheet-b">
+      <div class="sec-t">Panduan singkat</div>
+      <ol class="steps">
+        <li><b>Buka Google AI Studio.</b> Kunjungi <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> dan login dengan akun Google.</li>
+        <li><b>Buat API key.</b> Klik <i>Create API key</i>, lalu pilih project yang tersedia.</li>
+        <li><b>Salin key.</b> Copy key yang muncul, jangan dibagikan ke orang lain.</li>
+        <li><b>Tempel dan simpan.</b> Tempel di kolom di bawah, pilih model, lalu klik Simpan.</li>
+      </ol>
+      <div class="note">Key hanya disimpan di browser ini. Jika key tidak berfungsi, pastikan API Gemini sudah aktif untuk project tersebut.</div>
+
+      <div class="sec-t" style="margin-top:20px">Koneksi AI</div>
+      <div class="setg">
+        <label class="lbl" for="apiKeyS" style="margin-top:0">Gemini API key</label>
+        <div style="display:flex;gap:8px">
+          <input type="password" id="apiKeyS" placeholder="tempel API key" style="flex:1">
+          <button class="chip" onclick="toggleKey()">👁 Tampil</button>
+        </div>
+        <label class="lbl" for="modelS">Model</label>
+        <select id="modelS">
+          <option value="gemini-3.5-flash">gemini-3.5-flash (default, disarankan)</option>
+          <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+          <option value="gemini-2.5-pro">gemini-2.5-pro (kualitas lebih baik)</option>
+        </select>
+        <div class="btn-row" style="margin-top:14px">
+          <button class="chip" onclick="testKoneksi()">🔌 Tes Koneksi</button>
+          <span class="help" style="margin:0;align-self:center">Mengirim pesan uji ke Gemini memakai key dan model di atas.</span>
+        </div>
+      </div>
+
+      <div class="toast" id="setStatus"></div>
+      <div class="sheet-f">
+        <button class="btn soft sm" onclick="closeSettings()">Batal</button>
+        <button class="btn" onclick="saveSettings()">Simpan Pengaturan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 const $ = id => document.getElementById(id);
 const W = 1080, H = 1350;
+const MODEL_DEFAULT = 'gemini-3.5-flash';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
@@ -443,24 +529,25 @@ const DEFAULT_TEMPLATES = [
 const CUSTOM_KEY = 'kpu_cover_custom_tpl';
 let TEMPLATES = [...DEFAULT_TEMPLATES, ...loadCustom()];
 
-// ===== LAYOUT per jenis (ubah angka bila teks meleset) =====
-const LAYOUT = {
-  sampul: { x: 46, titleY: 1052, maxW: 790, maxLines: 4, startSize: 30, lineRatio: 0.97,
-            lineY: 1204, dateY: 1213, dateSize: 26 },
-  dokumentasi: { x: 60, titleY: 1136, maxW: 960, maxLines: 2, startSize: 40, lineRatio: 1.0,
-            lineY: 1232, dateY: 1246, dateSize: 24 }
-};
+// ===== LAYOUT =====
+const SAMPUL = { x: 46, titleY: 1052, maxW: 790, maxLines: 4, startSize: 30, lineRatio: 0.97, lineY: 1204, dateY: 1213, dateSize: 26 };
+const DOK    = { centerY: 630, maxW: 900, maxLines: 4, startSize: 34, minSize: 22, lineRatio: 1.32 };
 const FONT = 'Montserrat, Arial, sans-serif';
-const lay = () => LAYOUT[S.type] || LAYOUT.sampul;
 
 const cv = $('cv'), ctx = cv.getContext('2d');
 cv.width = W; cv.height = H;
 
-const S = { type: 'sampul', template: null, tplId: null, photo: null, photo2: null, judul: '', narasi: '', tanggal: new Date() };
+// State per jenis: input, hasil, dan caption disimpan terpisah
+const S = {
+  type: 'sampul', template: null, tplId: null,
+  photo: null, photo2: null, hasil: '', tanggal: new Date(),
+  by: { sampul: { santai: '', hasil: '', cap: '' }, dokumentasi: { santai: '', hasil: '', cap: '' } }
+};
 const HIST_KEY = 'kpu_cover_hist';
 
 // ===== Utilitas =====
 function toast(id, msg, cls) { const t = $(id); t.textContent = msg; t.className = 'toast show ' + cls; }
+function hideToast(id) { $(id).className = 'toast'; }
 function loadImage(src) {
   return new Promise((res, rej) => {
     const img = new Image();
@@ -480,8 +567,9 @@ function ymd(d) {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+const isDok = () => S.type === 'dokumentasi';
 
-// ===== Logo: tampilkan teks KPU bila file logo belum ada =====
+// ===== Logo (permanen: logo-kpu.png di root repositori) =====
 (function initLogo() {
   const img = $('logoImg');
   img.onload = () => { $('logoFb').style.display = 'none'; };
@@ -489,6 +577,106 @@ function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&l
   if (img.complete && img.naturalWidth > 0) $('logoFb').style.display = 'none';
   if (img.complete && img.naturalWidth === 0) img.style.display = 'none';
 })();
+
+// ===== Kamera =====
+let camStream = null, camTarget = 1;
+async function openCamera(n) {
+  camTarget = n;
+  $('camMsg').textContent = '';
+  $('camModal').classList.add('open');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    $('camMsg').textContent = 'Browser ini tidak mendukung kamera. Gunakan unggah foto.';
+    return;
+  }
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+    $('camVideo').srcObject = camStream;
+  } catch (e) {
+    $('camMsg').textContent = 'Kamera tidak bisa diakses. Beri izin kamera di browser, dan pastikan halaman dibuka lewat HTTPS atau localhost.';
+  }
+}
+function closeCamera() {
+  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+  $('camVideo').srcObject = null;
+  $('camModal').classList.remove('open');
+}
+function captureCamera() {
+  const v = $('camVideo');
+  if (!v.videoWidth) { $('camMsg').textContent = 'Kamera belum siap. Tunggu sebentar lalu coba lagi.'; return; }
+  const c = document.createElement('canvas');
+  c.width = v.videoWidth; c.height = v.videoHeight;
+  c.getContext('2d').drawImage(v, 0, 0);
+  const img = new Image();
+  img.onload = () => {
+    if (camTarget === 1) {
+      S.photo = img; $('photoName').textContent = 'Foto dari kamera'; $('pick1').classList.add('has');
+    } else {
+      S.photo2 = img; $('photoName2').textContent = 'Foto dari kamera'; $('pick2').classList.add('has');
+    }
+    render();
+    closeCamera();
+  };
+  img.src = c.toDataURL('image/jpeg', 0.92);
+}
+
+// ===== Pengaturan AI =====
+function setStatus(msg, cls) { toast('setStatus', msg, cls); }
+function updateAiChip() {
+  const ok = !!localStorage.getItem('gemini_key');
+  const chip = $('aiChip');
+  chip.textContent = ok ? 'AI siap' : 'AI belum diatur';
+  chip.className = 'tag ai-chip ' + (ok ? 'on' : 'off');
+}
+function openSettings() {
+  $('apiKeyS').value = localStorage.getItem('gemini_key') || '';
+  const m = localStorage.getItem('gemini_model');
+  $('modelS').value = [...$('modelS').options].some(o => o.value === m) ? m : MODEL_DEFAULT;
+  hideToast('setStatus');
+  $('modal').classList.add('open');
+}
+function closeSettings() { $('modal').classList.remove('open'); }
+function toggleKey() { const k = $('apiKeyS'); k.type = k.type === 'password' ? 'text' : 'password'; }
+async function testKoneksi() {
+  const key = $('apiKeyS').value.trim();
+  if (!key) return setStatus('Isi API key dulu, lalu tes koneksi.', 'err');
+  setStatus('Menguji koneksi ke Gemini...', 'info');
+  try {
+    const out = await gemini('Balas hanya dengan kata: OK', false, key, $('modelS').value);
+    setStatus('Koneksi berhasil. Respons: ' + out.slice(0, 60), 'ok');
+  } catch (e) {
+    setStatus('Koneksi gagal: ' + e.message, 'err');
+  }
+}
+function saveSettings() {
+  const key = $('apiKeyS').value.trim();
+  if (!key) return setStatus('Isi API key dulu. Ikuti panduan di atas.', 'err');
+  localStorage.setItem('gemini_key', key);
+  localStorage.setItem('gemini_model', $('modelS').value);
+  updateAiChip();
+  setStatus('Pengaturan tersimpan.', 'ok');
+  setTimeout(closeSettings, 600);
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSettings(); closeCamera(); } });
+
+async function gemini(prompt, asJson, keyOv, modelOv) {
+  const key = keyOv || localStorage.getItem('gemini_key');
+  const model = modelOv || localStorage.getItem('gemini_model') || MODEL_DEFAULT;
+  if (!key) throw new Error('API key belum diatur. Buka pengaturan (ikon gir).');
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: Object.assign({ temperature: 0.5 }, asJson ? { responseMimeType: 'application/json' } : {})
+    })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message || res.statusText);
+  const text = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').trim();
+  if (!asJson) return text;
+  return JSON.parse(text.replace(/```json|```/g, '').trim());
+}
 
 // ===== Jenis & galeri template =====
 function loadCustom() { try { return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || []; } catch { return []; } }
@@ -498,15 +686,13 @@ function saveCustom() {
   catch { return false; }
 }
 function renderTypes() {
-  document.querySelectorAll('.type').forEach(b =>
-    b.classList.toggle('active', b.dataset.type === S.type));
+  document.querySelectorAll('.type').forEach(b => b.classList.toggle('active', b.dataset.type === S.type));
 }
 function renderGallery() {
   renderTypes();
   const g = $('gallery');
   g.innerHTML = '';
-  const list = TEMPLATES.filter(t => t.type === S.type);
-  list.forEach(t => {
+  TEMPLATES.filter(t => t.type === S.type).forEach(t => {
     const card = document.createElement('button');
     card.className = 'tpl' + (t.custom ? ' custom' : '') + (t.id === S.tplId ? ' active' : '');
     const shown = decodeURI(t.src);
@@ -528,7 +714,6 @@ function renderGallery() {
   g.appendChild(add);
 }
 
-// Cache template agar tidak dimuat ulang setiap kali dipilih
 const TPL_CACHE = {};
 async function getTemplateCanvas(t) {
   if (TPL_CACHE[t.id]) return TPL_CACHE[t.id];
@@ -538,20 +723,38 @@ async function getTemplateCanvas(t) {
   TPL_CACHE[t.id] = c;
   return c;
 }
+
+// Simpan / muat isi form per jenis
+function saveCur() {
+  const b = S.by[S.type];
+  b.santai = $('inputSantai').value;
+  b.hasil = S.hasil;
+  b.cap = $('caption').value;
+}
+function loadCur() {
+  const b = S.by[S.type];
+  $('inputSantai').value = b.santai;
+  S.hasil = b.hasil; $('hasil').value = b.hasil;
+  $('caption').value = b.cap;
+}
+
 function selectType(type) {
-  // Pindah jenis: kosongkan pilihan template, pengguna pilih atau tambah sendiri
+  saveCur();
   S.type = type;
   S.tplId = null; S.template = null;
-  renderTypes();
-  updatePhotoUI();
+  loadCur();
+  updateModeUI();
   renderGallery();
   render();
 }
 async function selectTemplate(id) {
   const t = TEMPLATES.find(x => x.id === id);
   if (!t) return;
-  S.tplId = id; S.type = t.type;
-  renderTypes(); updatePhotoUI(); renderGallery();
+  S.tplId = id;
+  S.type = t.type;
+  saveCur();
+  loadCur();
+  renderTypes(); updateModeUI(); renderGallery();
   try {
     S.template = await getTemplateCanvas(t);
     render();
@@ -568,18 +771,33 @@ $('tplUpload').onchange = async e => {
   const name = f.name.replace(/\.(png|jpe?g)$/i, '').replace(/[_-]+/g, ' ').trim() || 'Template baru';
   const t = { id: 'c-' + Date.now(), name, src, type: S.type, custom: true };
   TEMPLATES.push(t);
-  if (!saveCustom()) {
-    toast('toastAI', 'Penyimpanan browser penuh. Template aktif sampai halaman ditutup. Simpan file-nya ke repositori dan tambahkan ke DEFAULT_TEMPLATES agar permanen.', 'info');
-  }
+  if (!saveCustom()) toast('toastAI', 'Penyimpanan browser penuh. Template aktif sampai halaman ditutup.', 'info');
   selectTemplate(t.id);
 };
 function removeTemplate(id) {
   if (!confirm('Hapus template ini dari daftar?')) return;
   TEMPLATES = TEMPLATES.filter(t => t.id !== id);
   saveCustom();
-  if (S.tplId === id) { S.tplId = null; S.template = null; selectType(S.type); }
-  else renderGallery();
+  if (S.tplId === id) { S.tplId = null; S.template = null; render(); }
+  renderGallery();
 }
+
+// ===== Mode UI (sampul vs dokumentasi) =====
+function updateModeUI() {
+  const dok = isDok();
+  $('photo2Block').style.display = dok ? 'block' : 'none';
+  $('photoTitle').textContent = dok ? 'Foto 1 (atas)' : 'Foto Utama';
+  $('cardDate').style.display = dok ? 'none' : 'block';
+  $('textTitle').textContent = dok ? 'Keterangan & Narasi' : 'Judul';
+  $('lblSantai').textContent = dok ? 'Keterangan kegiatan (bahasa santai)' : 'Judul (bahasa santai)';
+  $('inputSantai').placeholder = dok
+    ? 'contoh: apel pagi bersama seluruh staf sekretariat'
+    : 'contoh: sekretariat ikut bimtek elearning lapkin';
+  $('lblHasil').textContent = dok ? 'Narasi 1 kalimat' : 'Judul formal';
+  $('hasil').placeholder = dok ? 'Narasi akan muncul di sini' : 'Judul formal akan muncul di sini';
+  $('btnAIText').textContent = aiLabel();
+}
+function aiLabel() { return isDok() ? 'Buat Narasi dengan AI' : 'Formalkan Judul dengan AI'; }
 
 // ===== Foto =====
 $('photoFile').onchange = async e => {
@@ -602,7 +820,6 @@ function resetPhoto() {
   ['posX', 'posY', 'posX2', 'posY2'].forEach(id => $(id).value = 0);
   render();
 }
-// Gambar foto di dalam satu area (slot). Foto di-crop agar memenuhi area.
 function drawSlot(img, r, zId, xId, yId) {
   ctx.save();
   ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
@@ -618,61 +835,84 @@ function drawSlot(img, r, zId, xId, yId) {
   }
   ctx.restore();
 }
-function updatePhotoUI() {
-  const dok = S.type === 'dokumentasi';
-  $('photo2Block').style.display = dok ? 'block' : 'none';
-  $('photoTitle').textContent = dok ? 'Foto 1 (atas)' : 'Foto Utama';
-}
 
-// ===== Teks =====
-function wrapLines(text, size) {
-  const g = lay();
+// ===== Teks di kanvas =====
+// Sampul: judul besar di bawah, huruf kapital, tanggal di bawah judul
+function wrapUpper(text, size) {
   const words = text.toUpperCase().split(/\s+/).filter(Boolean);
   const lines = []; let cur = '';
   for (const w of words) {
     const test = cur ? cur + ' ' + w : w;
     ctx.font = `${lines.length === 0 ? 700 : 400} ${size}px ${FONT}`;
-    if (ctx.measureText(test).width <= g.maxW || !cur) cur = test;
+    if (ctx.measureText(test).width <= SAMPUL.maxW || !cur) cur = test;
     else { lines.push(cur); cur = w; }
   }
   if (cur) lines.push(cur);
   return lines;
 }
-function layoutTitle() {
-  const g = lay();
-  for (let size = g.startSize; size >= 20; size--) {
-    const lines = wrapLines(S.judul, size);
-    if (lines.length <= g.maxLines) return { size, lines };
+function drawSampulText() {
+  ctx.fillStyle = '#fff'; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+  if (S.hasil.trim()) {
+    let size = SAMPUL.startSize, lines = [];
+    for (size = SAMPUL.startSize; size >= 20; size--) {
+      lines = wrapUpper(S.hasil, size);
+      if (lines.length <= SAMPUL.maxLines) break;
+    }
+    const lh = Math.round(size * SAMPUL.lineRatio);
+    lines.forEach((ln, i) => {
+      ctx.font = `${i === 0 ? 700 : 400} ${size}px ${FONT}`;
+      ctx.fillText(ln, SAMPUL.x, SAMPUL.titleY + i * lh);
+    });
   }
-  return { size: 20, lines: wrapLines(S.judul, 20) };
+  ctx.fillRect(SAMPUL.x, SAMPUL.lineY, 48, 3);
+  const [d, y] = formatTanggalParts(S.tanggal);
+  ctx.font = `400 ${SAMPUL.dateSize}px ${FONT}`;
+  ctx.fillText(d + ' ', SAMPUL.x, SAMPUL.dateY);
+  const w = ctx.measureText(d + ' ').width;
+  ctx.font = `700 ${SAMPUL.dateSize}px ${FONT}`;
+  ctx.fillText(y, SAMPUL.x + w, SAMPUL.dateY);
 }
 function formatTanggalParts(d) {
   const s = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   const i = s.lastIndexOf(' ');
   return [s.slice(0, i), s.slice(i + 1)];
 }
-function drawText() {
-  const g = lay();
-  ctx.fillStyle = '#fff'; ctx.textBaseline = 'top';
-  if (S.judul) {
-    const { size, lines } = layoutTitle();
-    const lh = Math.round(size * g.lineRatio);
-    lines.forEach((ln, i) => {
-      ctx.font = `${i === 0 ? 700 : 400} ${size}px ${FONT}`;
-      ctx.fillText(ln, g.x, g.titleY + i * lh);
-    });
+
+// Dokumentasi: narasi di tengah foto, rata tengah, dengan bayangan agar terbaca
+function wrapPlain(text, size, maxW) {
+  ctx.font = `600 ${size}px ${FONT}`;
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines = []; let cur = '';
+  for (const w of words) {
+    const test = cur ? cur + ' ' + w : w;
+    if (ctx.measureText(test).width <= maxW || !cur) cur = test;
+    else { lines.push(cur); cur = w; }
   }
-  ctx.fillRect(g.x, g.lineY, 48, 3);
-  const [d, y] = formatTanggalParts(S.tanggal);
-  ctx.font = `400 ${g.dateSize}px ${FONT}`;
-  ctx.fillText(d + ' ', g.x, g.dateY);
-  const w = ctx.measureText(d + ' ').width;
-  ctx.font = `700 ${g.dateSize}px ${FONT}`;
-  ctx.fillText(y, g.x + w, g.dateY);
+  if (cur) lines.push(cur);
+  return lines;
 }
+function drawDokNarasi() {
+  const text = S.hasil.trim();
+  if (!text) return;
+  let size = DOK.startSize, lines = [];
+  for (size = DOK.startSize; size >= DOK.minSize; size -= 2) {
+    lines = wrapPlain(text, size, DOK.maxW);
+    if (lines.length <= DOK.maxLines) break;
+  }
+  const lh = Math.round(size * DOK.lineRatio);
+  const startY = DOK.centerY - ((lines.length - 1) * lh) / 2;
+  ctx.save();
+  ctx.font = `600 ${size}px ${FONT}`;
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 2;
+  lines.forEach((ln, i) => ctx.fillText(ln, W / 2, startY + i * lh));
+  ctx.restore();
+}
+
 function render() {
   ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
-  if (S.type === 'dokumentasi') {
+  if (isDok()) {
     const half = H / 2;
     drawSlot(S.photo, { x: 0, y: 0, w: W, h: half }, 'zoom', 'posX', 'posY');
     drawSlot(S.photo2, { x: 0, y: half, w: W, h: half }, 'zoom2', 'posX2', 'posY2');
@@ -680,7 +920,7 @@ function render() {
     drawSlot(S.photo, { x: 0, y: 0, w: W, h: H }, 'zoom', 'posX', 'posY');
   }
   if (S.template) ctx.drawImage(S.template, 0, 0, W, H);
-  drawText();
+  if (isDok()) drawDokNarasi(); else drawSampulText();
 }
 
 // ===== Tanggal =====
@@ -695,83 +935,117 @@ function applyDate() {
 $('autoDate').onchange = applyDate;
 $('tanggal').onchange = () => { S.tanggal = new Date($('tanggal').value + 'T00:00:00'); render(); };
 
-$('judulFormal').oninput = e => { S.judul = e.target.value; render(); };
-$('narasi').oninput = e => { S.narasi = e.target.value; };
-$('judulSantai').addEventListener('keydown', e => { if (e.key === 'Enter') formalkan(); });
+// Hasil diedit manual
+$('hasil').oninput = e => { S.hasil = e.target.value; S.by[S.type].hasil = S.hasil; render(); };
+$('caption').oninput = e => { S.by[S.type].cap = e.target.value; };
+$('inputSantai').addEventListener('input', e => { S.by[S.type].santai = e.target.value; });
+$('inputSantai').addEventListener('keydown', e => { if (e.key === 'Enter') formalkan(); });
 
-// ===== Gemini =====
-function toggleKey() { const k = $('apiKey'); k.type = k.type === 'password' ? 'text' : 'password'; }
+// ===== Formalkan (judul / narasi) =====
 async function formalkan() {
-  const key = $('apiKey').value.trim();
-  const model = $('model').value || 'gemini-3.5-flash';
-  const santai = $('judulSantai').value.trim();
-  if (!key) return toast('toastAI', 'Isi Gemini API key dulu di bagian Pengaturan AI.', 'err');
-  if (!santai) return toast('toastAI', 'Tulis judul dengan bahasa santai dulu.', 'err');
-  localStorage.setItem('gemini_key', key);
-  localStorage.setItem('gemini_model', model);
+  const santai = $('inputSantai').value.trim();
+  if (!localStorage.getItem('gemini_key')) return toast('toastAI', 'API key belum diatur. Buka pengaturan (ikon gir) dan ikuti panduannya.', 'err');
+  if (!santai) return toast('toastAI', isDok() ? 'Tulis keterangan kegiatan dulu.' : 'Tulis judul dengan bahasa santai dulu.', 'err');
 
   const tgl = S.tanggal.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-  const ket = $('ket').value.trim();
-  const prompt = `Kamu adalah editor humas KPU Kabupaten Hulu Sungai Tengah.
-Tugas:
-1. Ubah judul berikut dari bahasa santai menjadi judul berita resmi berbahasa Indonesia baku, singkat (maksimal 15 kata), tanpa tanda seru, tanpa emoji, tanpa tanda tanya.
-2. Buat tepat SATU kalimat narasi berita singkat dengan pola: "KPU Kabupaten Hulu Sungai Tengah ..." yang menjelaskan inti kegiatan dan menyebut tanggal ${tgl} bila relevan.
-Aturan: gunakan hanya informasi dari judul dan keterangan. Jangan menambah nama orang, angka, atau tempat yang tidak disebutkan.
-
+  const prompt = isDok()
+    ? `Kamu adalah editor humas KPU Kabupaten Hulu Sungai Tengah.
+Buat tepat SATU kalimat narasi berita singkat berbahasa Indonesia baku dengan pola "KPU Kabupaten Hulu Sungai Tengah ..." dari keterangan kegiatan berikut.
+Gunakan hanya informasi dari keterangan. Jangan menambah nama orang, angka, atau tempat yang tidak disebutkan. Jangan pakai tanda seru atau emoji.
+Keterangan: ${santai}
+Balas HANYA dengan JSON tanpa teks lain: {"hasil": "..."}`
+    : `Kamu adalah editor humas KPU Kabupaten Hulu Sungai Tengah.
+Ubah judul berikut dari bahasa santai menjadi judul berita resmi berbahasa Indonesia baku, maksimal 15 kata, tanpa tanda seru, tanpa emoji, tanpa tanda tanya. Tanggal berita: ${tgl}.
 Judul santai: ${santai}
-Keterangan tambahan: ${ket || '(tidak ada)'}
+Balas HANYA dengan JSON tanpa teks lain: {"hasil": "..."}`;
 
-Balas HANYA dengan JSON tanpa teks lain: {"judul": "...", "narasi": "..."}`;
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
   const btn = $('btnAI');
-  const original = btn.innerHTML;
-  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Memproses...';
-  toast('toastAI', 'Gemini sedang menyusun judul dan narasi...', 'info');
+  btn.disabled = true;
+  $('btnAIText').textContent = 'Memproses...';
+  toast('toastAI', 'Gemini sedang menyusun...', 'info');
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.4, responseMimeType: 'application/json' }
-      })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || res.statusText);
-    const text = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('');
-    const out = JSON.parse(text.replace(/```json|```/g, '').trim());
-    S.judul = out.judul || ''; S.narasi = out.narasi || '';
-    $('judulFormal').value = S.judul; $('narasi').value = S.narasi;
-    render(); saveHistory();
+    const out = await gemini(prompt, true);
+    setHasil(out.hasil || '');
+    saveHistory();
     toast('toastAI', 'Selesai. Cek dan edit hasilnya bila perlu.', 'ok');
   } catch (e) {
     toast('toastAI', 'Gagal: ' + e.message, 'err');
   } finally {
-    btn.disabled = false; btn.innerHTML = original;
+    btn.disabled = false;
+    $('btnAIText').textContent = aiLabel();
+  }
+}
+function setHasil(v) {
+  S.hasil = v;
+  $('hasil').value = v;
+  S.by[S.type].hasil = v;
+  render();
+}
+
+// ===== Caption =====
+function ensureTags(text) {
+  let out = text.trim();
+  const missing = [];
+  if (!/#temanpemilih/i.test(out)) missing.push('#temanpemilih');
+  if (!/#KPUKabHST/i.test(out)) missing.push('#KPUKabHST');
+  if (missing.length) out += '\n\n' + missing.join(' ');
+  return out;
+}
+async function buatCaption() {
+  const hasil = S.hasil.trim();
+  if (!localStorage.getItem('gemini_key')) return toast('toastCap', 'API key belum diatur. Buka pengaturan (ikon gir).', 'err');
+  if (!hasil) return toast('toastCap', isDok() ? 'Buat narasi dulu di bagian Keterangan & Narasi.' : 'Buat judul dulu di bagian Judul.', 'err');
+
+  const tgl = S.tanggal.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+  const prompt = `Kamu adalah admin media sosial KPU Kabupaten Hulu Sungai Tengah.
+Buat caption untuk ${isDok() ? 'dokumentasi kegiatan' : 'berita'} berikut dalam bahasa Indonesia yang ramah, jelas, dan tidak berlebihan.
+${isDok() ? 'Narasi' : 'Judul'}: ${hasil}
+${isDok() ? '' : 'Tanggal: ' + tgl}
+
+Caption wajib memuat tiga bagian dalam 2 sampai 3 paragraf pendek:
+1. Konteks: apa kegiatannya dan mengapa penting.
+2. Manfaat: apa manfaatnya bagi masyarakat dan pemilih.
+3. Call to action: ajakan yang jelas, misalnya mengikuti akun resmi KPU, membaca informasi lengkap, atau ikut berpartisipasi.
+
+Gunakan hanya informasi di atas. Jangan menambah fakta, nama, atau angka. Boleh memakai 1 sampai 2 emoji yang sopan.
+Akhiri caption dengan hashtag #temanpemilih dan #KPUKabHST.
+Balas HANYA teks caption, tanpa judul atau penjelasan tambahan.`;
+
+  const btn = $('btnCap');
+  btn.disabled = true;
+  toast('toastCap', 'Gemini sedang menulis caption...', 'info');
+  try {
+    const text = await gemini(prompt, false);
+    $('caption').value = ensureTags(text);
+    S.by[S.type].cap = $('caption').value;
+    toast('toastCap', 'Caption siap. Silakan cek dan salin.', 'ok');
+  } catch (e) {
+    toast('toastCap', 'Gagal: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
   }
 }
 
-// ===== Riwayat (teks saja) =====
+// ===== Riwayat =====
 function getHist() { try { return JSON.parse(localStorage.getItem(HIST_KEY)) || []; } catch { return []; } }
 function saveHistory() {
-  if (!S.judul) return;
-  const h = getHist().filter(x => x.judul !== S.judul);
-  h.unshift({ judul: S.judul, narasi: S.narasi, tgl: ymd(S.tanggal) });
+  if (!S.hasil.trim()) return;
+  const h = getHist().filter(x => !(x.hasil === S.hasil && x.type === S.type));
+  h.unshift({ type: S.type, hasil: S.hasil, tgl: ymd(S.tanggal) });
   localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, 15)));
   renderHist();
 }
 function renderHist() {
   const h = getHist(), box = $('hist');
-  if (!h.length) { box.innerHTML = '<div class="help" style="margin:0">Belum ada riwayat. Judul yang sudah diformalkan akan muncul di sini.</div>'; return; }
+  if (!h.length) { box.innerHTML = '<div class="help" style="margin:0">Belum ada riwayat. Hasil yang sudah dibuat akan muncul di sini.</div>'; return; }
   box.innerHTML = '';
   h.forEach(x => {
     const b = document.createElement('button');
-    b.innerHTML = `${escapeHtml(x.judul)}<small>${x.tgl}</small>`;
+    const label = x.type === 'dokumentasi' ? 'Dokumentasi' : 'Sampul Berita';
+    b.innerHTML = `${escapeHtml(x.hasil)}<small>${label} · ${x.tgl}</small>`;
     b.onclick = () => {
-      S.judul = x.judul; S.narasi = x.narasi;
-      $('judulFormal').value = x.judul; $('narasi').value = x.narasi;
-      render();
+      if (S.type !== x.type) selectType(x.type);
+      setHasil(x.hasil);
     };
     box.appendChild(b);
   });
@@ -780,25 +1054,25 @@ function renderHist() {
 // ===== Salin, unduh, reset =====
 async function copyField(id) {
   const v = $(id).value;
-  try { await navigator.clipboard.writeText(v); toast('toastAI', 'Tersalin ke clipboard.', 'ok'); }
-  catch { $(id).select(); document.execCommand('copy'); toast('toastAI', 'Tersalin.', 'ok'); }
+  try { await navigator.clipboard.writeText(v); toast(id === 'caption' ? 'toastCap' : 'toastAI', 'Tersalin ke clipboard.', 'ok'); }
+  catch { $(id).select(); document.execCommand('copy'); toast(id === 'caption' ? 'toastCap' : 'toastAI', 'Tersalin.', 'ok'); }
 }
 function download() {
   if (!S.template) return alert('Pilih template dulu.');
   cv.toBlob(b => {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(b);
-    const slug = (S.judul || 'berita').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40);
-    const prefix = S.type === 'dokumentasi' ? 'dokumentasi' : 'sampul';
+    const slug = (S.hasil || 'berita').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40);
+    const prefix = isDok() ? 'dokumentasi' : 'sampul';
     a.download = `${prefix}-${slug}-${ymd(S.tanggal)}.png`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }, 'image/png');
 }
 function resetAll() {
-  S.judul = ''; S.narasi = ''; S.photo = null; S.photo2 = null;
-  $('judulSantai').value = ''; $('ket').value = '';
-  $('judulFormal').value = ''; $('narasi').value = '';
+  S.photo = null; S.photo2 = null;
+  S.hasil = ''; S.by[S.type] = { santai: '', hasil: '', cap: '' };
+  $('inputSantai').value = ''; $('hasil').value = ''; $('caption').value = '';
   $('photoFile').value = ''; $('photoFile2').value = '';
   $('photoName').textContent = 'Belum ada foto dipilih';
   $('photoName2').textContent = 'Belum ada foto dipilih';
@@ -807,7 +1081,7 @@ function resetAll() {
   render();
 }
 
-// ===== Keyboard HP: pastikan kolom yang diisi tidak tertutup =====
+// ===== Keyboard HP =====
 (function initMobileTyping() {
   const isField = el => el && el.matches &&
     el.matches('input:not([type=range]):not([type=file]):not([type=checkbox]), textarea, select');
@@ -827,13 +1101,14 @@ function resetAll() {
 })();
 
 // ===== Init =====
-$('apiKey').value = localStorage.getItem('gemini_key') || '';
+initLogo();
+updateAiChip();
 const savedModel = localStorage.getItem('gemini_model');
-const modelOpts = [...$('model').options].map(o => o.value);
-$('model').value = modelOpts.includes(savedModel) ? savedModel : 'gemini-3.5-flash';
+$('modelS').value = [...$('modelS').options].some(o => o.value === savedModel) ? savedModel : MODEL_DEFAULT;
 selectType('sampul');
 applyDate();
 renderHist();
+if (!localStorage.getItem('gemini_key')) setTimeout(openSettings, 400);
 document.fonts.load('700 30px Montserrat')
   .then(() => document.fonts.load('400 30px Montserrat'))
   .catch(() => {})
