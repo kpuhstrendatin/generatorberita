@@ -135,6 +135,16 @@ input:disabled{opacity:.55}
 .fp-txt b{display:block;font-size:14px;font-weight:800}
 .fp-txt small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .fp-btn{font-size:12px;font-weight:800;color:#fff;background:var(--r600);padding:8px 13px;border-radius:999px;white-space:nowrap;box-shadow:0 6px 14px -6px rgba(179,18,28,.7)}
+.pickrow{display:flex;gap:10px;align-items:stretch}
+.pickrow .filepick{flex:1;min-width:0}
+.cam-btn{
+  flex:0 0 58px;border:0;border-radius:16px;cursor:pointer;color:#fff;display:grid;place-items:center;
+  background:linear-gradient(120deg,var(--r700),var(--r500));box-shadow:0 10px 20px -10px rgba(143,12,20,.7);
+  transition:transform .15s,box-shadow .2s;
+}
+.cam-btn:hover{transform:translateY(-2px);box-shadow:0 14px 24px -10px rgba(143,12,20,.8)}
+.cam-btn:active{transform:scale(.97)}
+.cam-btn svg{width:24px;height:24px}
 .filepick.has .fp-btn{background:#1f7a3f;box-shadow:0 6px 14px -6px rgba(31,122,63,.6)}
 
 .pblock{margin-top:16px;padding-top:16px;border-top:1px dashed #eadcdc}
@@ -357,11 +367,14 @@ footer b{color:var(--r600)}
       <!-- Foto -->
       <div class="card">
         <div class="card-h"><span class="bar"></span><h3 id="photoTitle">Foto Utama</h3><span class="hint">JPG / PNG</span></div>
+        <div class="pickrow">
         <label class="filepick" for="photoFile" id="pick1">
           <span class="fp-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg></span>
           <span class="fp-txt"><b>Unggah foto</b><small id="photoName">Belum ada foto dipilih</small></span>
           <span class="fp-btn">Pilih</span>
         </label>
+        <button class="cam-btn" onclick="openCamera(1)" title="Ambil dari kamera" aria-label="Ambil dari kamera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
+        </div>
         <input type="file" id="photoFile" accept="image/*" class="sr">
         <label class="lbl">Zoom</label>
         <input type="range" id="zoom" min="1" max="2.5" step="0.01" value="1">
@@ -372,11 +385,14 @@ footer b{color:var(--r600)}
 
         <div class="pblock" id="photo2Block" style="display:none">
           <div class="sub">Foto 2 (bawah)</div>
+          <div class="pickrow">
           <label class="filepick" for="photoFile2" id="pick2">
             <span class="fp-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg></span>
             <span class="fp-txt"><b>Unggah foto</b><small id="photoName2">Belum ada foto dipilih</small></span>
             <span class="fp-btn">Pilih</span>
           </label>
+          <button class="cam-btn" onclick="openCamera(2)" title="Ambil dari kamera" aria-label="Ambil dari kamera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
+          </div>
           <input type="file" id="photoFile2" accept="image/*" class="sr">
           <label class="lbl">Zoom</label>
           <input type="range" id="zoom2" min="1" max="2.5" step="0.01" value="1">
@@ -384,10 +400,8 @@ footer b{color:var(--r600)}
           <input type="range" id="posX2" min="-1" max="1" step="0.01" value="0">
           <label class="lbl">Geser vertikal</label>
           <input type="range" id="posY2" min="-1" max="1" step="0.01" value="0">
-          <div class="btn-row"><button class="chip" onclick="openCamera(2)">📷 Ambil dari kamera</button></div>
         </div>
         <div class="btn-row">
-          <button class="chip" onclick="openCamera(1)">📷 Ambil dari kamera</button>
           <button class="chip" onclick="resetPhoto()">↺ Reset posisi foto</button>
         </div>
       </div>
@@ -529,7 +543,7 @@ const $ = id => document.getElementById(id);
 const W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-2';
+const APP_VERSION = '2026.11.18-3';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
@@ -541,7 +555,7 @@ let TEMPLATES = [...DEFAULT_TEMPLATES, ...loadCustom()];
 
 // ===== LAYOUT =====
 const SAMPUL = { x: 46, titleY: 1052, maxW: 790, maxLines: 4, startSize: 30, lineRatio: 0.97, lineY: 1204, dateY: 1213, dateSize: 26 };
-const DOK    = { centerY: 630, maxW: 900, maxLines: 4, startSize: 34, minSize: 22, lineRatio: 1.32 };
+const DOK    = { centerY: 630, maxW: 900, maxLines: 4, startSize: 25, minSize: 16, lineRatio: 1.16 };
 const FONT = 'Montserrat, Arial, sans-serif';
 
 const cv = $('cv'), ctx = cv.getContext('2d');
