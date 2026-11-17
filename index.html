@@ -391,8 +391,8 @@ const W = 1080, H = 1350;
 // ===== TEMPLATE BAWAAN (file di folder templates/) =====
 // type: 'sampul' atau 'dokumentasi'
 const DEFAULT_TEMPLATES = [
-  { id: 'sampul-1', name: 'Sampul Berita', src: 'templates/sampul-berita.png', type: 'sampul', custom: false },
-  { id: 'dok-1', name: 'Dokumentasi', src: 'templates/dokumentasi.png', type: 'dokumentasi', custom: false }
+  { id: 'sampul-1', name: 'Sampul Berita', src: 'templates/Template%20Sampul.png', type: 'sampul', custom: false },
+  { id: 'dok-1', name: 'Dokumentasi', src: 'templates/Template%20Dokumentasi.png', type: 'dokumentasi', custom: false }
 ];
 const CUSTOM_KEY = 'kpu_cover_custom_tpl';
 let TEMPLATES = [...DEFAULT_TEMPLATES, ...loadCustom()];
@@ -490,12 +490,13 @@ async function getTemplateCanvas(t) {
   return c;
 }
 function selectType(type) {
+  // Pindah jenis: kosongkan pilihan template, pengguna pilih atau tambah sendiri
   S.type = type;
+  S.tplId = null; S.template = null;
   renderTypes();
   updatePhotoUI();
-  const first = TEMPLATES.find(t => t.type === type);
-  if (first) selectTemplate(first.id);
-  else { S.tplId = null; S.template = null; renderGallery(); render(); }
+  renderGallery();
+  render();
 }
 async function selectTemplate(id) {
   const t = TEMPLATES.find(x => x.id === id);
