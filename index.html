@@ -542,8 +542,9 @@ footer b{color:var(--r600)}
 const $ = id => document.getElementById(id);
 const W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
+const FALLBACK_MODELS = ['gemini-2.5-flash'];
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-3';
+const APP_VERSION = '2026.11.18-4';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
@@ -665,7 +666,7 @@ async function testKoneksi() {
   if (!key) return setStatus('Isi API key dulu, lalu tes koneksi.', 'err');
   setStatus('Menguji koneksi ke Gemini...', 'info');
   try {
-    const out = await gemini('Balas hanya dengan kata: OK', false, key, $('modelS').value);
+    const out = await gemini('Balas hanya dengan kata: OK', false, key, $('modelS').value, msg => setStatus(msg, 'info'));
     setStatus('Koneksi berhasil. Respons: ' + out.slice(0, 60), 'ok');
   } catch (e) {
     setStatus('Koneksi gagal: ' + e.message, 'err');
@@ -682,24 +683,57 @@ function saveSettings() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSettings(); closeCamera(); } });
 
-async function gemini(prompt, asJson, keyOv, modelOv) {
+// Gemini kadang sibuk (503 / 429). Aplikasi mencoba ulang dengan jeda makin lama,
+// lalu beralih ke model cadangan. Error permanen (misalnya key salah) langsung ditampilkan.
+const RETRY_STATUS = [429, 500, 503, 504];
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function gemini(prompt, asJson, keyOv, modelOv, onStatus) {
   const key = keyOv || localStorage.getItem('gemini_key');
-  const model = modelOv || localStorage.getItem('gemini_model') || MODEL_DEFAULT;
+  const primary = modelOv || localStorage.getItem('gemini_model') || MODEL_DEFAULT;
   if (!key) throw new Error('API key belum diatur. Buka pengaturan (ikon gir).');
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: Object.assign({ temperature: 0.5 }, asJson ? { responseMimeType: 'application/json' } : {})
-    })
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message || res.statusText);
-  const text = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').trim();
-  if (!asJson) return text;
-  return JSON.parse(text.replace(/```json|```/g, '').trim());
+  const models = [primary, ...FALLBACK_MODELS.filter(m => m !== primary)];
+  const notify = msg => { if (onStatus) onStatus(msg); };
+
+  for (const model of models) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      let res, data;
+      try {
+        res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: Object.assign({ temperature: 0.5 }, asJson ? { responseMimeType: 'application/json' } : {})
+          })
+        });
+        data = await res.json().catch(() => ({}));
+      } catch (e) {
+        if (attempt === 2) break;
+        notify('Koneksi bermasalah, mencoba lagi...');
+        await sleep(1500 * 2 ** attempt);
+        continue;
+      }
+
+      if (res.ok) {
+        const text = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').trim();
+        if (!asJson) return text;
+        return JSON.parse(text.replace(/```json|```/g, '').trim());
+      }
+
+      // Error permanen: tampilkan langsung
+      if (!RETRY_STATUS.includes(res.status)) {
+        throw new Error(data.error?.message || res.statusText);
+      }
+      // Error sementara: tunggu lalu coba lagi
+      if (attempt < 2) {
+        notify(`Model ${model} sedang ramai, mencoba lagi (${attempt + 2}/3)...`);
+        await sleep(1500 * 2 ** attempt);
+      }
+    }
+    notify(`Model ${model} masih sibuk, beralih ke model cadangan...`);
+  }
+  throw new Error('Layanan Gemini sedang sangat ramai. Coba lagi beberapa menit lagi.');
 }
 
 // ===== Jenis & galeri template =====
@@ -988,7 +1022,7 @@ Balas HANYA dengan JSON tanpa teks lain: {"hasil": "..."}`;
   $('btnAIText').textContent = 'Memproses...';
   toast('toastAI', 'Gemini sedang menyusun...', 'info');
   try {
-    const out = await gemini(prompt, true);
+    const out = await gemini(prompt, true, undefined, undefined, msg => toast('toastAI', msg, 'info'));
     setHasil(out.hasil || '');
     saveHistory();
     toast('toastAI', 'Selesai. Cek dan edit hasilnya bila perlu.', 'ok');
@@ -1039,7 +1073,7 @@ Balas HANYA teks caption, tanpa judul atau penjelasan tambahan.`;
   btn.disabled = true;
   toast('toastCap', 'Gemini sedang menulis caption...', 'info');
   try {
-    const text = await gemini(prompt, false);
+    const text = await gemini(prompt, false, undefined, undefined, msg => toast('toastCap', msg, 'info'));
     $('caption').value = ensureTags(text);
     S.by[S.type].cap = $('caption').value;
     toast('toastCap', 'Caption siap. Silakan cek dan salin.', 'ok');
