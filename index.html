@@ -518,11 +518,14 @@ footer b{color:var(--r600)}
           <button class="chip" onclick="toggleKey()">👁 Tampil</button>
         </div>
         <label class="lbl" for="modelS">Model</label>
-        <select id="modelS">
-          <option value="gemini-3.5-flash">gemini-3.5-flash (default, disarankan)</option>
-          <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-          <option value="gemini-2.5-pro">gemini-2.5-pro (kualitas lebih baik)</option>
-        </select>
+        <input type="text" id="modelS" list="modelList" placeholder="contoh: gemini-3.5-flash" autocomplete="off">
+        <datalist id="modelList">
+          <option value="gemini-3.5-flash">Gemini 3.5 Flash (default)</option>
+          <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite (lebih hemat)</option>
+          <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+          <option value="gemini-2.5-pro">Gemini 2.5 Pro (kualitas lebih baik)</option>
+        </datalist>
+        <div class="help">Pilih dari saran, atau ketik ID model untuk Gemini 4 Hydrogen. Salin ID persisnya dari Google AI Studio (menu model), lalu tes koneksi.</div>
         <div class="btn-row" style="margin-top:14px">
           <button class="chip" onclick="testKoneksi()">🔌 Tes Koneksi</button>
           <span class="help" style="margin:0;align-self:center">Mengirim pesan uji ke Gemini memakai key dan model di atas.</span>
@@ -544,7 +547,7 @@ const W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
 const FALLBACK_MODELS = ['gemini-2.5-flash'];
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-4';
+const APP_VERSION = '2026.11.18-5';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
@@ -655,7 +658,7 @@ function updateAiChip() {
 function openSettings() {
   $('apiKeyS').value = localStorage.getItem('gemini_key') || '';
   const m = localStorage.getItem('gemini_model');
-  $('modelS').value = [...$('modelS').options].some(o => o.value === m) ? m : MODEL_DEFAULT;
+  $('modelS').value = m || MODEL_DEFAULT;
   hideToast('setStatus');
   $('modal').classList.add('open');
 }
@@ -666,7 +669,7 @@ async function testKoneksi() {
   if (!key) return setStatus('Isi API key dulu, lalu tes koneksi.', 'err');
   setStatus('Menguji koneksi ke Gemini...', 'info');
   try {
-    const out = await gemini('Balas hanya dengan kata: OK', false, key, $('modelS').value, msg => setStatus(msg, 'info'));
+    const out = await gemini('Balas hanya dengan kata: OK', false, key, $('modelS').value.trim() || MODEL_DEFAULT, msg => setStatus(msg, 'info'));
     setStatus('Koneksi berhasil. Respons: ' + out.slice(0, 60), 'ok');
   } catch (e) {
     setStatus('Koneksi gagal: ' + e.message, 'err');
@@ -676,7 +679,7 @@ function saveSettings() {
   const key = $('apiKeyS').value.trim();
   if (!key) return setStatus('Isi API key dulu. Ikuti panduan di atas.', 'err');
   localStorage.setItem('gemini_key', key);
-  localStorage.setItem('gemini_model', $('modelS').value);
+  localStorage.setItem('gemini_model', $('modelS').value.trim() || MODEL_DEFAULT);
   updateAiChip();
   setStatus('Pengaturan tersimpan.', 'ok');
   setTimeout(closeSettings, 600);
@@ -1181,7 +1184,7 @@ cekVersi();
 initLogo();
 updateAiChip();
 const savedModel = localStorage.getItem('gemini_model');
-$('modelS').value = [...$('modelS').options].some(o => o.value === savedModel) ? savedModel : MODEL_DEFAULT;
+$('modelS').value = savedModel || MODEL_DEFAULT;
 selectType('sampul');
 applyDate();
 renderHist();
