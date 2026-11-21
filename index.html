@@ -92,14 +92,21 @@ svg{display:block}
 .gear svg{width:20px;height:20px}
 @media(max-width:760px){.top{padding:16px 16px 20px}.tag.hide-sm{display:none}}
 
-/* Header di HP: semua rata tengah */
-@media(max-width:760px){
+/* Header: rata tengah di semua layar, sama seperti tampilan HP */
+@media(min-width:0){
   .top-in{flex-direction:column;align-items:center;text-align:center;gap:14px}
   .brand-text{display:flex;flex-direction:column;align-items:center}
   .brand-text h1{font-size:26px}
   .brand-text p{font-size:12.5px;max-width:300px;margin-left:auto;margin-right:auto}
   .hdr-right{margin-left:0;justify-content:center;width:100%;gap:8px}
   .hdr-right .tag,.hdr-right .update-btn,.hdr-right .ai-chip{font-size:11.5px;padding:6px 11px}
+}
+
+@media(min-width:761px){
+  .brand-text h1{font-size:38px}
+  .brand-text p{font-size:14.5px}
+  .eyebrow{font-size:11.5px;padding:6px 14px}
+  .top{padding:26px 28px 30px}
 }
 
 /* ================= LAYOUT ================= */
@@ -600,7 +607,7 @@ let W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
 const FALLBACK_MODELS = ['gemini-2.5-flash'];
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-18';
+const APP_VERSION = '2026.11.18-19';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
