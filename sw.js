@@ -1,6 +1,6 @@
 // Service worker: menyimpan aplikasi agar bisa dibuka cepat dan tetap jalan saat sinyal lemah.
 // Ubah nama CACHE (misal kpu-cover-v2) setiap kali template atau aset berubah.
-const CACHE = 'kpu-cover-v2';
+const CACHE = 'kpu-cover-v3';
 const SHELL = [
   './',
   './index.html',
@@ -9,14 +9,18 @@ const SHELL = [
   './Template%20Sampul.png',
   './Template%20Dokumentasi.png',
   './Template%20Story.png',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-maskable-512.png',
-  './icons/apple-touch-icon.png'
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-512.png',
+  './apple-touch-icon.png'
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => null))))  // satu file hilang tidak menggagalkan pemasangan
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', e => {
