@@ -437,6 +437,7 @@ footer b{color:var(--r600)}
         <div class="vrow">
           <input type="text" id="inputSantai">
           <button class="mic-btn" id="micSantai" onclick="toggleVoice('inputSantai','micSantai')" title="Tulis dengan suara" aria-label="Tulis dengan suara"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+          <button class="mic-btn clr" onclick="clearField('inputSantai')" title="Hapus isi" aria-label="Hapus isi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
         </div>
         <button class="btn gold block" id="btnAI" onclick="formalkan()" style="margin-top:14px">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
@@ -447,6 +448,7 @@ footer b{color:var(--r600)}
         <div class="btn-row">
           <button class="chip" onclick="copyField('hasil')">📋 Salin</button>
           <button class="chip" id="micHasil" onclick="toggleVoice('hasil','micHasil')">🎙 Bicara</button>
+          <button class="chip" onclick="clearField('hasil')">✕ Hapus</button>
         </div>
         <div class="toast" id="toastAI"></div>
       </div>
@@ -481,6 +483,7 @@ footer b{color:var(--r600)}
         </div>
         <div class="canvasbox"><canvas id="cv"></canvas></div>
         <div class="pv-actions">
+          <button class="btn block" id="btnRec" onclick="rekamVideo()" style="display:none">⏺ Rekam Video Story</button>
           <button class="btn block" onclick="download()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
             Unduh PNG
@@ -570,7 +573,7 @@ let W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
 const FALLBACK_MODELS = ['gemini-2.5-flash'];
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-8';
+const APP_VERSION = '2026.11.18-9';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
@@ -874,7 +877,11 @@ function removeTemplate(id) {
 function updateModeUI() {
   const dok = isDok();
   $('photo2Block').style.display = dok ? 'block' : 'none';
-  $('photoTitle').textContent = dok ? 'Foto 1 (atas)' : 'Foto Utama';
+  const story = S.type === 'story';
+  $('photoFile').accept = story ? 'image/*,video/*' : 'image/*';
+  $('photoTitle').textContent = dok ? 'Foto 1 (atas)' : (story ? 'Foto / Video' : 'Foto Utama');
+  if (!story) clearVideo();
+  $('btnRec').style.display = story && S.video ? 'block' : 'none';
   $('cardDate').style.display = dok ? 'none' : 'block';
   $('textTitle').textContent = dok ? 'Keterangan & Narasi' : 'Judul';
   $('lblSantai').textContent = dok ? 'Keterangan kegiatan (bahasa santai)' : 'Judul (bahasa santai)';
@@ -889,10 +896,19 @@ function aiLabel() { return isDok() ? 'Buat Narasi dengan AI' : 'Formalkan Judul
 
 // ===== Foto =====
 $('photoFile').onchange = async e => {
-  const f = e.target.files[0]; if (!f) return;
-  S.photo = await loadImage(await fileToDataURL(f));
-  $('photoName').textContent = f.name;
-  $('pick1').classList.add('has');
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  if (f.type.startsWith('video/')) {
+    if (S.type !== 'story') return toast('toastAI', 'Video hanya bisa dipakai di jenis Story.', 'err');
+    setVideo(f);
+    $('photoName').textContent = f.name;
+    $('pick1').classList.add('has');
+  } else {
+    clearVideo();
+    S.photo = await loadImage(await fileToDataURL(f));
+    $('photoName').textContent = f.name;
+    $('pick1').classList.add('has');
+  }
   render();
 };
 $('photoFile2').onchange = async e => {
@@ -915,8 +931,9 @@ function drawSlot(img, r, zId, xId, yId) {
     ctx.fillStyle = '#efe6e6'; ctx.fillRect(r.x, r.y, r.w, r.h);
   } else {
     const z = +$(zId).value, ox = +$(xId).value, oy = +$(yId).value;
-    const s = Math.max(r.w / img.width, r.h / img.height) * z;
-    const dw = img.width * s, dh = img.height * s;
+    const iw = img.videoWidth || img.width, ih = img.videoHeight || img.height;
+    const s = Math.max(r.w / iw, r.h / ih) * z;
+    const dw = iw * s, dh = ih * s;
     const dx = r.x + (r.w - dw) / 2 + ox * Math.max(0, (dw - r.w) / 2);
     const dy = r.y + (r.h - dh) / 2 + oy * Math.max(0, (dh - r.h) / 2);
     ctx.drawImage(img, dx, dy, dw, dh);
@@ -1032,8 +1049,11 @@ function render() {
     const half = H / 2;
     drawSlot(S.photo, { x: 0, y: 0, w: W, h: half }, 'zoom', 'posX', 'posY');
     drawSlot(S.photo2, { x: 0, y: half, w: W, h: half }, 'zoom2', 'posX2', 'posY2');
-  } else if (S.photo) {
-    drawSlot(S.photo, { x: 0, y: 0, w: W, h: H }, 'zoom', 'posX', 'posY');
+  } else {
+    const src = (S.type === 'story' && S.video) ? S.video : S.photo;
+    if (src && (!src.tagName || src.tagName !== 'VIDEO' || src.readyState >= 2)) {
+      drawSlot(src, { x: 0, y: 0, w: W, h: H }, 'zoom', 'posX', 'posY');
+    }
   }
   if (S.template) ctx.drawImage(S.template, 0, 0, W, H);
   if (isDok()) drawDokNarasi();
@@ -1188,6 +1208,7 @@ function download() {
   }, 'image/png');
 }
 function resetAll() {
+  clearVideo();
   S.photo = null; S.photo2 = null;
   S.hasil = ''; S.by[S.type] = { santai: '', hasil: '', cap: '' };
   $('inputSantai').value = ''; $('hasil').value = ''; $('caption').value = '';
@@ -1217,6 +1238,93 @@ function resetAll() {
     hideTimer = setTimeout(() => document.body.classList.remove('typing'), 200);
   });
 })();
+
+// ===== Video untuk Story =====
+function setVideo(file) {
+  clearVideo();
+  const v = document.createElement('video');
+  v.src = URL.createObjectURL(file);
+  v.muted = true; v.playsInline = true; v.preload = 'auto';
+  v.onloadeddata = () => { v.currentTime = 0; render(); };
+  S.video = v;
+  $('btnRec').style.display = S.type === 'story' ? 'block' : 'none';
+}
+function clearVideo() {
+  if (S.video) {
+    S.video.pause();
+    URL.revokeObjectURL(S.video.src);
+    S.video = null;
+  }
+  if ($('btnRec')) $('btnRec').style.display = 'none';
+}
+async function rekamVideo() {
+  if (!S.video || S.recording) return;
+  if (!window.MediaRecorder || !cv.captureStream) {
+    return toast('toastAI', 'Browser ini belum mendukung rekam video. Gunakan Chrome atau Edge terbaru.', 'err');
+  }
+  S.recording = true;
+  const btn = $('btnRec');
+  btn.disabled = true; btn.textContent = '⏺ Merekam... (tunggu sampai video selesai)';
+  const v = S.video;
+  v.currentTime = 0; v.muted = false; v.volume = 1;
+
+  // Gabungkan gambar kanvas dan audio dari video
+  const tracks = [...cv.captureStream(30).getVideoTracks()];
+  try {
+    const vs = v.captureStream ? v.captureStream() : (v.mozCaptureStream ? v.mozCaptureStream() : null);
+    if (vs) tracks.push(...vs.getAudioTracks());
+  } catch (e) { /* tanpa audio */ }
+  const stream = new MediaStream(tracks);
+  const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4']
+    .find(m => MediaRecorder.isTypeSupported(m)) || '';
+  const rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 6000000 } : {});
+  const chunks = [];
+  rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+
+  let raf = null;
+  const loop = () => { render(); raf = requestAnimationFrame(loop); };
+  const finish = () => {
+    if (raf) cancelAnimationFrame(raf);
+    if (rec.state !== 'inactive') rec.stop();
+  };
+  v.addEventListener('ended', finish, { once: true });
+
+  rec.onstop = () => {
+    const type = rec.mimeType || 'video/webm';
+    const ext = type.includes('mp4') ? 'mp4' : 'webm';
+    const blob = new Blob(chunks, { type });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    const slug = (S.hasil || 'story').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40);
+    a.download = `story-${slug}-${ymd(S.tanggal)}.${ext}`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    v.muted = true;
+    S.recording = false;
+    btn.disabled = false; btn.textContent = '⏺ Rekam Video Story';
+    render();
+    toast('toastAI', 'Video story sudah diunduh.', 'ok');
+  };
+
+  rec.start(200);
+  loop();
+  try {
+    await v.play();
+  } catch (e) {
+    finish();
+    S.recording = false;
+    btn.disabled = false; btn.textContent = '⏺ Rekam Video Story';
+    toast('toastAI', 'Video tidak bisa diputar. Coba unggah ulang video.', 'err');
+  }
+}
+
+// Hapus isi judul atau narasi
+function clearField(id) {
+  if (voice && voiceTarget === id) voice.stop();
+  if (id === 'hasil') setHasil('');
+  else setFieldValue(id, '');
+  hideToast('toastAI');
+}
 
 // ===== Input suara (Web Speech API) =====
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
