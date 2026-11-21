@@ -599,7 +599,7 @@ let W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
 const FALLBACK_MODELS = ['gemini-2.5-flash'];
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-16';
+const APP_VERSION = '2026.11.18-17';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
@@ -1513,6 +1513,10 @@ function instalAplikasi() {
 }
 if (isStandalone()) $('installBtn').style.display = 'none';
 else if (isIOS()) $('installBtn').style.display = '';
+else {
+  // Android: jika Chrome belum menawarkan pemasangan otomatis, tombol tetap tampil dengan panduan manual
+  setTimeout(() => { if (!deferredPrompt && !isStandalone()) $('installBtn').style.display = ''; }, 3000);
+}
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
