@@ -386,7 +386,7 @@ footer b{color:var(--r600)}
         <div class="pickrow">
         <label class="filepick" for="photoFile" id="pick1">
           <span class="fp-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg></span>
-          <span class="fp-txt"><b>Unggah foto</b><small id="photoName">Belum ada foto dipilih</small></span>
+          <span class="fp-txt"><b id="pickTitle1">Unggah foto</b><small id="photoName">Belum ada foto dipilih</small></span>
           <span class="fp-btn">Pilih</span>
         </label>
         <button class="cam-btn" onclick="openCamera(1)" title="Ambil dari kamera" aria-label="Ambil dari kamera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
@@ -503,15 +503,16 @@ footer b{color:var(--r600)}
   <div class="sheet">
     <div class="sheet-h">
       <button class="x" onclick="closeCamera()" aria-label="Tutup">✕</button>
-      <h2>Ambil Foto</h2>
-      <p>Arahkan kamera, lalu tekan Ambil Foto.</p>
+      <h2 id="camTitle">Ambil Foto</h2>
+      <p id="camSub">Arahkan kamera, lalu tekan Ambil Foto.</p>
     </div>
     <div class="sheet-b">
       <video id="camVideo" class="cam" autoplay playsinline muted></video>
       <div class="help" id="camMsg" style="color:#a10d15;font-weight:700"></div>
       <div class="sheet-f">
         <button class="btn soft sm" onclick="closeCamera()">Batal</button>
-        <button class="btn" onclick="captureCamera()">📸 Ambil Foto</button>
+        <button class="btn" id="camShot" onclick="captureCamera()">📸 Ambil Foto</button>
+        <button class="btn" id="camRec" onclick="toggleRecordCam()" style="display:none">⏺ Mulai Rekam</button>
       </div>
     </div>
   </div>
@@ -573,7 +574,7 @@ let W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
 const FALLBACK_MODELS = ['gemini-2.5-flash'];
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-9';
+const APP_VERSION = '2026.11.18-10';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
@@ -634,28 +635,60 @@ const isDok = () => S.type === 'dokumentasi';
   if (img.complete && img.naturalWidth === 0) img.style.display = 'none';
 })();
 
-// ===== Kamera =====
-let camStream = null, camTarget = 1;
+// ===== Kamera (foto, dan video untuk Story) =====
+let camStream = null, camTarget = 1, camMode = 'photo';
+let camRecorder = null, camChunks = [], camTimer = null, camStart = 0;
+const CAM_MAX_SEC = 60;
+
 async function openCamera(n) {
   camTarget = n;
+  camMode = (n === 1 && S.type === 'story') ? 'video' : 'photo';
+  const isVid = camMode === 'video';
   $('camMsg').textContent = '';
+  $('camTitle').textContent = isVid ? 'Rekam Video' : 'Ambil Foto';
+  $('camSub').textContent = isVid
+    ? `Rekam langsung dari kamera, maksimal ${CAM_MAX_SEC} detik.`
+    : 'Arahkan kamera, lalu tekan Ambil Foto.';
+  $('camShot').style.display = isVid ? 'none' : '';
+  $('camRec').style.display = isVid ? '' : 'none';
   $('camModal').classList.add('open');
+
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    $('camMsg').textContent = 'Browser ini tidak mendukung kamera. Gunakan unggah foto.';
+    $('camMsg').textContent = 'Browser ini tidak mendukung kamera. Gunakan unggah file.';
     return;
   }
+  const video = { facingMode: { ideal: 'environment' } };
   try {
-    camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
-    $('camVideo').srcObject = camStream;
+    camStream = await navigator.mediaDevices.getUserMedia({ video, audio: isVid });
   } catch (e) {
-    $('camMsg').textContent = 'Kamera tidak bisa diakses. Beri izin kamera di browser, dan pastikan halaman dibuka lewat HTTPS atau localhost.';
+    if (isVid) {
+      try {
+        camStream = await navigator.mediaDevices.getUserMedia({ video, audio: false });
+        $('camMsg').textContent = 'Mikrofon tidak tersedia, video direkam tanpa suara.';
+      } catch (e2) { camStream = null; }
+    }
+    if (!camStream) {
+      $('camMsg').textContent = 'Kamera tidak bisa diakses. Beri izin kamera di browser, dan pastikan halaman dibuka lewat HTTPS atau localhost.';
+      return;
+    }
   }
+  $('camVideo').srcObject = camStream;
 }
+
+function stopCamTimer() { if (camTimer) { clearInterval(camTimer); camTimer = null; } }
 function closeCamera() {
+  stopCamTimer();
+  if (camRecorder && camRecorder.state !== 'inactive') {
+    camRecorder.discard = true;   // rekaman yang belum selesai dibuang
+    camRecorder.stop();
+  }
+  camRecorder = null; camChunks = [];
   if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
   $('camVideo').srcObject = null;
+  $('camRec').textContent = '⏺ Mulai Rekam';
   $('camModal').classList.remove('open');
 }
+
 function captureCamera() {
   const v = $('camVideo');
   if (!v.videoWidth) { $('camMsg').textContent = 'Kamera belum siap. Tunggu sebentar lalu coba lagi.'; return; }
@@ -673,6 +706,44 @@ function captureCamera() {
     closeCamera();
   };
   img.src = c.toDataURL('image/jpeg', 0.92);
+}
+
+function toggleRecordCam() {
+  if (camRecorder && camRecorder.state === 'recording') { camRecorder.stop(); return; }
+  if (!camStream) { $('camMsg').textContent = 'Kamera belum siap.'; return; }
+  if (!window.MediaRecorder) { $('camMsg').textContent = 'Browser ini belum mendukung rekam video.'; return; }
+
+  const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4']
+    .find(m => MediaRecorder.isTypeSupported(m)) || '';
+  const rec = new MediaRecorder(camStream, mime ? { mimeType: mime } : {});
+  const chunks = [];
+  rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  rec.onstop = () => {
+    stopCamTimer();
+    camRecorder = null; camChunks = [];
+    $('camRec').textContent = '⏺ Mulai Rekam';
+    if (rec.discard) return;
+    const type = rec.mimeType || 'video/webm';
+    const ext = type.includes('mp4') ? 'mp4' : 'webm';
+    const file = new File([new Blob(chunks, { type })], `rekaman-kamera.${ext}`, { type });
+    closeCamera();
+    setVideo(file);
+    $('photoName').textContent = 'Video dari kamera';
+    $('pick1').classList.add('has');
+    render();
+  };
+  camRecorder = rec;
+  rec.start(200);
+  camStart = Date.now();
+  $('camRec').textContent = '⏹ Berhenti';
+  $('camMsg').textContent = '● Merekam 00:00';
+  camTimer = setInterval(() => {
+    const sec = Math.floor((Date.now() - camStart) / 1000);
+    const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+    const ss = String(sec % 60).padStart(2, '0');
+    $('camMsg').textContent = `● Merekam ${mm}:${ss} / 01:00`;
+    if (sec >= CAM_MAX_SEC && rec.state === 'recording') rec.stop();
+  }, 250);
 }
 
 // ===== Pengaturan AI =====
@@ -881,6 +952,7 @@ function updateModeUI() {
   $('photoFile').accept = story ? 'image/*,video/*' : 'image/*';
   $('photoTitle').textContent = dok ? 'Foto 1 (atas)' : (story ? 'Foto / Video' : 'Foto Utama');
   if (!story) clearVideo();
+  $('pickTitle1').textContent = story ? 'Unggah foto atau video' : 'Unggah foto';
   $('btnRec').style.display = story && S.video ? 'block' : 'none';
   $('cardDate').style.display = dok ? 'none' : 'block';
   $('textTitle').textContent = dok ? 'Keterangan & Narasi' : 'Judul';
