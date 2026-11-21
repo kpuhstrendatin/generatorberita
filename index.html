@@ -4,7 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <title>Generator Berita · KPU Kab. Hulu Sungai Tengah</title>
-<link rel="icon" href="logo-kpu.png">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8f0c14">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Generator Berita">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -70,6 +77,8 @@ svg{display:block}
 .tag.gold{background:var(--gold);border-color:var(--gold);color:var(--r700)}
 .ai-chip{cursor:pointer;font-family:inherit;color:#fff}
 .update-btn{cursor:pointer;font-family:inherit;color:#fff;background:rgba(255,255,255,.12)}
+.install-btn{cursor:pointer;font-family:inherit;color:var(--r700);background:#fff;border-color:#fff;font-weight:900}
+.install-btn:hover{background:#fff5f5}
 .update-btn:hover{background:rgba(255,255,255,.24)}
 .update-btn.new{background:var(--gold);border-color:var(--gold);color:var(--r700);animation:pulse 1.6s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(247,194,26,.55)}50%{box-shadow:0 0 0 7px rgba(247,194,26,0)}}
@@ -349,6 +358,7 @@ footer b{color:var(--r600)}
       <p>Buat cover berita & dokumentasi kegiatan dalam hitungan menit</p>
     </div>
     <div class="hdr-right">
+      <button class="tag install-btn" id="installBtn" onclick="instalAplikasi()" style="display:none">📲 Instal</button>
       <button class="tag update-btn" id="updBtn" onclick="perbaruiVersi()" title="Muat ulang aplikasi dengan versi terbaru">↻ Versi terbaru</button>
       <span class="tag gold hide-sm">#KPUMelayani</span>
       <button class="tag ai-chip off" id="aiChip" onclick="openSettings()">AI belum diatur</button>
@@ -589,7 +599,7 @@ let W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
 const FALLBACK_MODELS = ['gemini-2.5-flash'];
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-13';
+const APP_VERSION = '2026.11.18-15';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
@@ -1475,6 +1485,37 @@ function toggleVoice(fieldId, btnId) {
 }
 // Sembunyikan tombol suara jika browser tidak mendukung
 if (!SR) document.querySelectorAll('.mic-btn, #micHasil').forEach(b => b.style.display = 'none');
+
+// ===== Pasang aplikasi (PWA) =====
+let deferredPrompt = null;
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!isStandalone()) $('installBtn').style.display = '';
+});
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  $('installBtn').style.display = 'none';
+});
+function instalAplikasi() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.finally(() => { deferredPrompt = null; $('installBtn').style.display = 'none'; });
+    return;
+  }
+  if (isIOS()) {
+    alert('Cara memasang di iPhone atau iPad:\n1. Buka halaman ini di Safari.\n2. Tekan ikon Bagikan (kotak dengan panah ke atas).\n3. Pilih "Tambah ke Layar Utama".\n4. Tekan Tambah.');
+    return;
+  }
+  alert('Untuk memasang di Android, buka menu browser (⋮) lalu pilih "Instal aplikasi" atau "Tambahkan ke layar utama".');
+}
+if (isStandalone()) $('installBtn').style.display = 'none';
+else if (isIOS()) $('installBtn').style.display = '';
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
 
 // ===== Versi terbaru =====
 function perbaruiVersi() {
