@@ -80,7 +80,7 @@ svg{display:block}
 
 /* ================= LAYOUT ================= */
 .main{max-width:1280px;margin:0 auto;padding:24px}
-.hero-types{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.hero-types{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
 .type{
   position:relative;display:flex;align-items:center;gap:16px;text-align:left;cursor:pointer;
   background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:18px;
@@ -137,6 +137,17 @@ input:disabled{opacity:.55}
 .fp-btn{font-size:12px;font-weight:800;color:#fff;background:var(--r600);padding:8px 13px;border-radius:999px;white-space:nowrap;box-shadow:0 6px 14px -6px rgba(179,18,28,.7)}
 .pickrow{display:flex;gap:10px;align-items:stretch}
 .pickrow .filepick{flex:1;min-width:0}
+.vrow{display:flex;gap:10px;align-items:stretch}
+.vrow input{flex:1;min-width:0}
+.mic-btn{
+  flex:0 0 50px;border:0;border-radius:14px;cursor:pointer;color:#fff;display:grid;place-items:center;
+  background:linear-gradient(120deg,var(--r700),var(--r500));box-shadow:0 10px 20px -10px rgba(143,12,20,.7);
+  transition:transform .15s,box-shadow .2s,background .2s;
+}
+.mic-btn:hover{transform:translateY(-2px)}
+.mic-btn svg{width:22px;height:22px}
+.mic-btn.rec,.chip.rec{background:#c4161c;color:#fff;border-color:#c4161c;animation:micpulse 1.2s infinite}
+@keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(209,32,44,.6)}50%{box-shadow:0 0 0 9px rgba(209,32,44,0)}}
 .cam-btn{
   flex:0 0 58px;border:0;border-radius:16px;cursor:pointer;color:#fff;display:grid;place-items:center;
   background:linear-gradient(120deg,var(--r700),var(--r500));box-shadow:0 10px 20px -10px rgba(143,12,20,.7);
@@ -347,6 +358,11 @@ footer b{color:var(--r600)}
       <span class="ti"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><circle cx="12" cy="12.5" r="3.2"/><path d="M8.5 6l1.5-2h4l1.5 2"/></svg></span>
       <span><b>Dokumentasi</b><small>Dua foto kegiatan dengan narasi di tengah</small></span>
     </button>
+    <button class="type" data-type="story" onclick="selectType('story')">
+      <span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+      <span class="ti"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10 18.5h4"/></svg></span>
+      <span><b>Story</b><small>Format vertikal 1080 × 1920</small></span>
+    </button>
   </div>
 
   <!-- Template -->
@@ -418,14 +434,20 @@ footer b{color:var(--r600)}
       <div class="card">
         <div class="card-h"><span class="bar"></span><h3 id="textTitle">Judul</h3><span class="hint">✨ Gemini AI</span></div>
         <label class="lbl" id="lblSantai" for="inputSantai">Judul (bahasa santai)</label>
-        <input type="text" id="inputSantai">
+        <div class="vrow">
+          <input type="text" id="inputSantai">
+          <button class="mic-btn" id="micSantai" onclick="toggleVoice('inputSantai','micSantai')" title="Tulis dengan suara" aria-label="Tulis dengan suara"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        </div>
         <button class="btn gold block" id="btnAI" onclick="formalkan()" style="margin-top:14px">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
           <span id="btnAIText">Formalkan Judul dengan AI</span>
         </button>
         <label class="lbl" id="lblHasil" for="hasil" style="margin-top:18px">Judul formal</label>
         <textarea id="hasil" rows="2"></textarea>
-        <div class="btn-row"><button class="chip" onclick="copyField('hasil')">📋 Salin</button></div>
+        <div class="btn-row">
+          <button class="chip" onclick="copyField('hasil')">📋 Salin</button>
+          <button class="chip" id="micHasil" onclick="toggleVoice('hasil','micHasil')">🎙 Bicara</button>
+        </div>
         <div class="toast" id="toastAI"></div>
       </div>
 
@@ -455,7 +477,7 @@ footer b{color:var(--r600)}
       <div class="pv-card">
         <div class="pv-h">
           <h2>Pratinjau</h2>
-          <span class="badge">1080 × 1350 px</span>
+          <span class="badge" id="sizeBadge">1080 × 1350 px</span>
         </div>
         <div class="canvasbox"><canvas id="cv"></canvas></div>
         <div class="pv-actions">
@@ -543,16 +565,18 @@ footer b{color:var(--r600)}
 
 <script>
 const $ = id => document.getElementById(id);
-const W = 1080, H = 1350;
+const SIZES = { sampul: [1080, 1350], dokumentasi: [1080, 1350], story: [1080, 1920] };
+let W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
 const FALLBACK_MODELS = ['gemini-2.5-flash'];
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-5';
+const APP_VERSION = '2026.11.18-8';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
   { id: 'sampul-1', name: 'Sampul Berita', src: 'Template%20Sampul.png', type: 'sampul', custom: false },
-  { id: 'dok-1', name: 'Dokumentasi', src: 'Template%20Dokumentasi.png', type: 'dokumentasi', custom: false }
+  { id: 'dok-1', name: 'Dokumentasi', src: 'Template%20Dokumentasi.png', type: 'dokumentasi', custom: false },
+  { id: 'story-1', name: 'Story', src: 'Template%20Story.png', type: 'story', custom: false }
 ];
 const CUSTOM_KEY = 'kpu_cover_custom_tpl';
 let TEMPLATES = [...DEFAULT_TEMPLATES, ...loadCustom()];
@@ -560,6 +584,7 @@ let TEMPLATES = [...DEFAULT_TEMPLATES, ...loadCustom()];
 // ===== LAYOUT =====
 const SAMPUL = { x: 46, titleY: 1052, maxW: 790, maxLines: 4, startSize: 30, lineRatio: 0.97, lineY: 1204, dateY: 1213, dateSize: 26 };
 const DOK    = { centerY: 630, maxW: 900, maxLines: 4, startSize: 25, minSize: 16, lineRatio: 1.16 };
+const STORY = { cx: 748, maxW: 540, dateY: 1600, titleY: 1644, startSize: 44, minSize: 26, maxLines: 3, lineRatio: 1.18, dateSize: 24 };
 const FONT = 'Montserrat, Arial, sans-serif';
 
 const cv = $('cv'), ctx = cv.getContext('2d');
@@ -569,7 +594,7 @@ cv.width = W; cv.height = H;
 const S = {
   type: 'sampul', template: null, tplId: null,
   photo: null, photo2: null, hasil: '', tanggal: new Date(),
-  by: { sampul: { santai: '', hasil: '', cap: '' }, dokumentasi: { santai: '', hasil: '', cap: '' } }
+  by: { sampul: { santai: '', hasil: '', cap: '' }, dokumentasi: { santai: '', hasil: '', cap: '' }, story: { santai: '', hasil: '', cap: '' } }
 };
 const HIST_KEY = 'kpu_cover_hist';
 
@@ -803,6 +828,7 @@ function selectType(type) {
   saveCur();
   S.type = type;
   S.tplId = null; S.template = null;
+  setCanvasSize();
   loadCur();
   updateModeUI();
   renderGallery();
@@ -813,6 +839,7 @@ async function selectTemplate(id) {
   if (!t) return;
   S.tplId = id;
   S.type = t.type;
+  setCanvasSize();
   saveCur();
   loadCur();
   renderTypes(); updateModeUI(); renderGallery();
@@ -899,39 +926,40 @@ function drawSlot(img, r, zId, xId, yId) {
 
 // ===== Teks di kanvas =====
 // Sampul: judul besar di bawah, huruf kapital, tanggal di bawah judul
-function wrapUpper(text, size) {
+function wrapUpper(text, size, maxW) {
   const words = text.toUpperCase().split(/\s+/).filter(Boolean);
   const lines = []; let cur = '';
   for (const w of words) {
     const test = cur ? cur + ' ' + w : w;
     ctx.font = `${lines.length === 0 ? 700 : 400} ${size}px ${FONT}`;
-    if (ctx.measureText(test).width <= SAMPUL.maxW || !cur) cur = test;
+    if (ctx.measureText(test).width <= maxW || !cur) cur = test;
     else { lines.push(cur); cur = w; }
   }
   if (cur) lines.push(cur);
   return lines;
 }
 function drawSampulText() {
+  const L = S.type === 'story' ? STORY : SAMPUL;
   ctx.fillStyle = '#fff'; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
   if (S.hasil.trim()) {
-    let size = SAMPUL.startSize, lines = [];
-    for (size = SAMPUL.startSize; size >= 20; size--) {
-      lines = wrapUpper(S.hasil, size);
-      if (lines.length <= SAMPUL.maxLines) break;
+    let size = L.startSize, lines = [];
+    for (size = L.startSize; size >= 20; size--) {
+      lines = wrapUpper(S.hasil, size, L.maxW);
+      if (lines.length <= L.maxLines) break;
     }
-    const lh = Math.round(size * SAMPUL.lineRatio);
+    const lh = Math.round(size * L.lineRatio);
     lines.forEach((ln, i) => {
       ctx.font = `${i === 0 ? 700 : 400} ${size}px ${FONT}`;
-      ctx.fillText(ln, SAMPUL.x, SAMPUL.titleY + i * lh);
+      ctx.fillText(ln, L.x, L.titleY + i * lh);
     });
   }
-  ctx.fillRect(SAMPUL.x, SAMPUL.lineY, 48, 3);
+  ctx.fillRect(L.x, L.lineY, 48, 3);
   const [d, y] = formatTanggalParts(S.tanggal);
-  ctx.font = `400 ${SAMPUL.dateSize}px ${FONT}`;
-  ctx.fillText(d + ' ', SAMPUL.x, SAMPUL.dateY);
+  ctx.font = `400 ${L.dateSize}px ${FONT}`;
+  ctx.fillText(d + ' ', L.x, L.dateY);
   const w = ctx.measureText(d + ' ').width;
-  ctx.font = `700 ${SAMPUL.dateSize}px ${FONT}`;
-  ctx.fillText(y, SAMPUL.x + w, SAMPUL.dateY);
+  ctx.font = `700 ${L.dateSize}px ${FONT}`;
+  ctx.fillText(y, L.x + w, L.dateY);
 }
 function formatTanggalParts(d) {
   const s = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -971,6 +999,33 @@ function drawDokNarasi() {
   ctx.restore();
 }
 
+function drawStoryText() {
+  const L = STORY;
+  const text = S.hasil.trim();
+  ctx.save();
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 1;
+  if (text) {
+    let size = L.startSize, lines = [];
+    for (size = L.startSize; size >= L.minSize; size -= 2) {
+      lines = wrapPlain(text, size, L.maxW);
+      if (lines.length <= L.maxLines) break;
+    }
+    const lh = Math.round(size * L.lineRatio);
+    ctx.font = `600 ${size}px ${FONT}`;
+    lines.forEach((ln, i) => ctx.fillText(ln, L.cx, L.titleY + i * lh));
+  }
+  const [d, y] = formatTanggalParts(S.tanggal);
+  ctx.font = `600 ${L.dateSize}px ${FONT}`;
+  ctx.fillText(d + ' ' + y, L.cx, L.dateY);
+  ctx.restore();
+}
+function setCanvasSize() {
+  [W, H] = SIZES[S.type] || SIZES.sampul;
+  cv.width = W; cv.height = H;
+  const b = $('sizeBadge'); if (b) b.textContent = `${W} × ${H} px`;
+}
 function render() {
   ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
   if (isDok()) {
@@ -981,7 +1036,9 @@ function render() {
     drawSlot(S.photo, { x: 0, y: 0, w: W, h: H }, 'zoom', 'posX', 'posY');
   }
   if (S.template) ctx.drawImage(S.template, 0, 0, W, H);
-  if (isDok()) drawDokNarasi(); else drawSampulText();
+  if (isDok()) drawDokNarasi();
+  else if (S.type === 'story') drawStoryText();
+  else drawSampulText();
 }
 
 // ===== Tanggal =====
@@ -1124,7 +1181,7 @@ function download() {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(b);
     const slug = (S.hasil || 'berita').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40);
-    const prefix = isDok() ? 'dokumentasi' : 'sampul';
+    const prefix = S.type;
     a.download = `${prefix}-${slug}-${ymd(S.tanggal)}.png`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -1160,6 +1217,62 @@ function resetAll() {
     hideTimer = setTimeout(() => document.body.classList.remove('typing'), 200);
   });
 })();
+
+// ===== Input suara (Web Speech API) =====
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let voice = null, voiceTarget = null, voiceBtn = null;
+function setFieldValue(fieldId, v) {
+  const f = $(fieldId);
+  f.value = v;
+  f.dispatchEvent(new Event('input'));
+}
+function toggleVoice(fieldId, btnId) {
+  if (!SR) {
+    toast('toastAI', 'Browser ini belum mendukung input suara. Gunakan Chrome, Edge, atau Safari terbaru.', 'err');
+    return;
+  }
+  if (voice && voiceTarget === fieldId) { voice.stop(); return; }
+  if (voice) voice.stop();
+
+  const rec = new SR();
+  rec.lang = 'id-ID';
+  rec.continuous = true;
+  rec.interimResults = true;
+  const field = $(fieldId);
+  const base = field.value.trim() ? field.value.trimEnd() + ' ' : '';
+  let finalText = '';
+  rec.onresult = e => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalText += t + ' ';
+      else interim += t;
+    }
+    setFieldValue(fieldId, (base + finalText + interim).replace(/\s+/g, ' ').trimStart());
+  };
+  rec.onerror = e => {
+    const msg = e.error === 'not-allowed' || e.error === 'service-not-allowed'
+      ? 'Izin mikrofon ditolak. Izinkan mikrofon di pengaturan browser.'
+      : e.error === 'no-speech' ? 'Tidak ada suara terdengar. Coba lagi.'
+      : 'Input suara gagal: ' + e.error;
+    toast('toastAI', msg, 'err');
+  };
+  rec.onend = () => {
+    if (voiceBtn) voiceBtn.classList.remove('rec');
+    voice = null; voiceTarget = null; voiceBtn = null;
+  };
+  voice = rec; voiceTarget = fieldId; voiceBtn = $(btnId);
+  voiceBtn.classList.add('rec');
+  try {
+    rec.start();
+    toast('toastAI', 'Mendengarkan... ucapkan judul atau narasi. Tekan mikrofon lagi untuk berhenti.', 'info');
+  } catch (e) {
+    voiceBtn.classList.remove('rec');
+    voice = null; voiceTarget = null; voiceBtn = null;
+  }
+}
+// Sembunyikan tombol suara jika browser tidak mendukung
+if (!SR) document.querySelectorAll('.mic-btn, #micHasil').forEach(b => b.style.display = 'none');
 
 // ===== Versi terbaru =====
 function perbaruiVersi() {
