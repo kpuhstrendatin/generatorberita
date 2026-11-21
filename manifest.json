@@ -1,0 +1,17 @@
+{
+  "name": "Generator Berita KPU Kab. Hulu Sungai Tengah",
+  "short_name": "Generator Berita",
+  "description": "Buat cover berita, dokumentasi, dan story KPU Kabupaten Hulu Sungai Tengah",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fbf6f5",
+  "theme_color": "#8f0c14",
+  "lang": "id",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
