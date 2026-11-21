@@ -574,7 +574,7 @@ let W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
 const FALLBACK_MODELS = ['gemini-2.5-flash'];
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-10';
+const APP_VERSION = '2026.11.18-12';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
@@ -642,14 +642,15 @@ const CAM_MAX_SEC = 60;
 
 async function openCamera(n) {
   camTarget = n;
-  camMode = (n === 1 && S.type === 'story') ? 'video' : 'photo';
-  const isVid = camMode === 'video';
+  const story = n === 1 && S.type === 'story';
+  camMode = story ? 'video' : 'photo';
+  const isVid = story;
   $('camMsg').textContent = '';
-  $('camTitle').textContent = isVid ? 'Rekam Video' : 'Ambil Foto';
-  $('camSub').textContent = isVid
-    ? `Rekam langsung dari kamera, maksimal ${CAM_MAX_SEC} detik.`
+  $('camTitle').textContent = story ? 'Ambil Foto atau Rekam Video' : 'Ambil Foto';
+  $('camSub').textContent = story
+    ? `Ambil foto, atau rekam video maksimal ${CAM_MAX_SEC} detik.`
     : 'Arahkan kamera, lalu tekan Ambil Foto.';
-  $('camShot').style.display = isVid ? 'none' : '';
+  $('camShot').style.display = '';
   $('camRec').style.display = isVid ? '' : 'none';
   $('camModal').classList.add('open');
 
@@ -690,6 +691,10 @@ function closeCamera() {
 }
 
 function captureCamera() {
+  if (camRecorder && camRecorder.state === 'recording') {
+    $('camMsg').textContent = 'Hentikan rekaman dulu sebelum mengambil foto.';
+    return;
+  }
   const v = $('camVideo');
   if (!v.videoWidth) { $('camMsg').textContent = 'Kamera belum siap. Tunggu sebentar lalu coba lagi.'; return; }
   const c = document.createElement('canvas');
@@ -698,6 +703,7 @@ function captureCamera() {
   const img = new Image();
   img.onload = () => {
     if (camTarget === 1) {
+      clearVideo();
       S.photo = img; $('photoName').textContent = 'Foto dari kamera'; $('pick1').classList.add('has');
     } else {
       S.photo2 = img; $('photoName2').textContent = 'Foto dari kamera'; $('pick2').classList.add('has');
@@ -1314,6 +1320,7 @@ function resetAll() {
 // ===== Video untuk Story =====
 function setVideo(file) {
   clearVideo();
+  S.photo = null;
   const v = document.createElement('video');
   v.src = URL.createObjectURL(file);
   v.muted = true; v.playsInline = true; v.preload = 'auto';
@@ -1341,7 +1348,7 @@ async function rekamVideo() {
   v.currentTime = 0; v.muted = false; v.volume = 1;
 
   // Gabungkan gambar kanvas dan audio dari video
-  const tracks = [...cv.captureStream(30).getVideoTracks()];
+  const tracks = [...cv.captureStream(60).getVideoTracks()];
   try {
     const vs = v.captureStream ? v.captureStream() : (v.mozCaptureStream ? v.mozCaptureStream() : null);
     if (vs) tracks.push(...vs.getAudioTracks());
@@ -1349,7 +1356,7 @@ async function rekamVideo() {
   const stream = new MediaStream(tracks);
   const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4']
     .find(m => MediaRecorder.isTypeSupported(m)) || '';
-  const rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 6000000 } : {});
+  const rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 12000000 } : { videoBitsPerSecond: 12000000 });
   const chunks = [];
   rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
 
