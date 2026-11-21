@@ -444,6 +444,7 @@ footer b{color:var(--r600)}
         </div>
         <div class="btn-row">
           <button class="chip" onclick="resetPhoto()">↺ Reset posisi foto</button>
+          <button class="chip" id="btnRot" onclick="rotateVideo()" style="display:none">⟳ Putar video</button>
         </div>
       </div>
 
@@ -599,7 +600,7 @@ let W = 1080, H = 1350;
 const MODEL_DEFAULT = 'gemini-3.5-flash';
 const FALLBACK_MODELS = ['gemini-2.5-flash'];
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-17';
+const APP_VERSION = '2026.11.18-18';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
@@ -744,7 +745,7 @@ function toggleRecordCam() {
   if (!camStream) { $('camMsg').textContent = 'Kamera belum siap.'; return; }
   if (!window.MediaRecorder) { $('camMsg').textContent = 'Browser ini belum mendukung rekam video.'; return; }
 
-  const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4']
+  const mime = ['video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']
     .find(m => MediaRecorder.isTypeSupported(m)) || '';
   const rec = new MediaRecorder(camStream, mime ? { mimeType: mime } : {});
   const chunks = [];
@@ -985,6 +986,7 @@ function updateModeUI() {
   if (!story) clearVideo();
   $('pickTitle1').textContent = story ? 'Unggah foto atau video' : 'Unggah foto';
   $('btnRec').style.display = story && S.video ? 'block' : 'none';
+  updateRotBtn();
   $('cardDate').style.display = dok ? 'none' : 'block';
   $('textTitle').textContent = dok ? 'Keterangan & Narasi' : 'Judul';
   $('lblSantai').textContent = dok ? 'Keterangan kegiatan (bahasa santai)' : 'Judul (bahasa santai)';
@@ -1155,7 +1157,8 @@ function render() {
   } else {
     const src = (S.type === 'story' && S.video) ? S.video : S.photo;
     if (src && (!src.tagName || src.tagName !== 'VIDEO' || src.readyState >= 2)) {
-      drawSlot(src, { x: 0, y: 0, w: W, h: H }, 'zoom', 'posX', 'posY');
+      if (src === S.video) drawVideoRot(src, { x: 0, y: 0, w: W, h: H });
+      else drawSlot(src, { x: 0, y: 0, w: W, h: H }, 'zoom', 'posX', 'posY');
     }
   }
   if (S.template) ctx.drawImage(S.template, 0, 0, W, H);
@@ -1343,23 +1346,57 @@ function resetAll() {
 })();
 
 // ===== Video untuk Story =====
+// Video dari iPhone kadang terbaca miring. Video landscape otomatis diputar 90° (bisa diubah dengan tombol Putar).
+function drawVideoRot(v, r) {
+  const rot = S.videoRot || 0;
+  const vw = v.videoWidth, vh = v.videoHeight;
+  if (!vw || !vh) return;
+  const swap = rot % 180 !== 0;
+  const dispW = swap ? vh : vw, dispH = swap ? vw : vh;
+  const z = +$('zoom').value, ox = +$('posX').value, oy = +$('posY').value;
+  const s = Math.max(r.w / dispW, r.h / dispH) * z;
+  const dw = dispW * s, dh = dispH * s;
+  const cx = r.x + r.w / 2 + ox * Math.max(0, (dw - r.w) / 2);
+  const cy = r.y + r.h / 2 + oy * Math.max(0, (dh - r.h) / 2);
+  ctx.save();
+  ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
+  ctx.translate(cx, cy);
+  ctx.rotate(rot * Math.PI / 180);
+  ctx.drawImage(v, -vw * s / 2, -vh * s / 2, vw * s, vh * s);
+  ctx.restore();
+}
+function updateRotBtn() {
+  const b = $('btnRot');
+  if (b) b.style.display = (S.type === 'story' && S.video) ? '' : 'none';
+}
+function rotateVideo() {
+  S.videoRot = ((S.videoRot || 0) + 90) % 360;
+  render();
+}
 function setVideo(file) {
   clearVideo();
   S.photo = null;
+  S.videoRot = 0;
   const v = document.createElement('video');
   v.src = URL.createObjectURL(file);
   v.muted = true; v.playsInline = true; v.preload = 'auto';
+  v.onloadedmetadata = () => {
+    S.videoRot = v.videoWidth > v.videoHeight ? 90 : 0;
+    updateRotBtn(); render();
+  };
   v.onloadeddata = () => { v.currentTime = 0; render(); };
   S.video = v;
   $('btnRec').style.display = S.type === 'story' ? 'block' : 'none';
 }
 function clearVideo() {
+  S.videoRot = 0;
   if (S.video) {
     S.video.pause();
     URL.revokeObjectURL(S.video.src);
     S.video = null;
   }
   if ($('btnRec')) $('btnRec').style.display = 'none';
+  updateRotBtn();
 }
 async function rekamVideo() {
   if (!S.video || S.recording) return;
@@ -1379,7 +1416,7 @@ async function rekamVideo() {
     if (vs) tracks.push(...vs.getAudioTracks());
   } catch (e) { /* tanpa audio */ }
   const stream = new MediaStream(tracks);
-  const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4']
+  const mime = ['video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']
     .find(m => MediaRecorder.isTypeSupported(m)) || '';
   const rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 12000000 } : { videoBitsPerSecond: 12000000 });
   const chunks = [];
@@ -1396,6 +1433,7 @@ async function rekamVideo() {
   rec.onstop = () => {
     const type = rec.mimeType || 'video/webm';
     const ext = type.includes('mp4') ? 'mp4' : 'webm';
+    if (ext === 'webm') toast('toastAI', 'Browser ini hanya bisa merekam WebM. Gunakan Chrome atau Safari terbaru untuk hasil MP4.', 'info');
     const blob = new Blob(chunks, { type });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
