@@ -577,14 +577,20 @@ footer b{color:var(--r600)}
           <button class="chip" onclick="toggleKey()">👁 Tampil</button>
         </div>
         <label class="lbl" for="modelS">Model</label>
-        <input type="text" id="modelS" list="modelList" placeholder="contoh: gemini-3.5-flash" autocomplete="off">
+        <input type="text" id="modelS" list="modelList" placeholder="contoh: gemini-3.5-flash-lite" autocomplete="off">
         <datalist id="modelList">
-          <option value="gemini-3.5-flash">Gemini 3.5 Flash (default)</option>
-          <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite (lebih hemat)</option>
+          <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite (default, hemat & cepat)</option>
+          <option value="gemini-3.5-flash">Gemini 3.5 Flash (seimbang)</option>
+          <option value="gemini-3.5-pro">Gemini 3.5 Pro (kualitas tertinggi)</option>
+          <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite</option>
           <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-          <option value="gemini-2.5-pro">Gemini 2.5 Pro (kualitas lebih baik)</option>
+          <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+          <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite</option>
+          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+          <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
         </datalist>
-        <div class="help">Pilih dari saran, atau ketik ID model untuk Gemini 4 Hydrogen. Salin ID persisnya dari Google AI Studio (menu model), lalu tes koneksi.</div>
+        <div class="help">Pilih dari daftar, atau ketik ID model lain (misalnya Gemini 4 Hydrogen). Salin ID persisnya dari Google AI Studio, lalu tekan Tes Koneksi.</div>
         <div class="btn-row" style="margin-top:14px">
           <button class="chip" onclick="testKoneksi()">🔌 Tes Koneksi</button>
           <span class="help" style="margin:0;align-self:center">Mengirim pesan uji ke Gemini memakai key dan model di atas.</span>
@@ -604,10 +610,10 @@ footer b{color:var(--r600)}
 const $ = id => document.getElementById(id);
 const SIZES = { sampul: [1080, 1350], dokumentasi: [1080, 1350], story: [1080, 1920] };
 let W = 1080, H = 1350;
-const MODEL_DEFAULT = 'gemini-3.5-flash';
-const FALLBACK_MODELS = ['gemini-2.5-flash'];
+const MODEL_DEFAULT = 'gemini-3.5-flash-lite';
+const FALLBACK_MODELS = ['gemini-2.5-flash-lite', 'gemini-2.5-flash'];
 // Ubah nilai ini setiap kali index.html diperbarui agar tombol "Versi terbaru" bisa mendeteksi perubahan
-const APP_VERSION = '2026.11.18-19';
+const APP_VERSION = '2026.11.18-20';
 
 // ===== TEMPLATE BAWAAN (file di root repositori) =====
 const DEFAULT_TEMPLATES = [
